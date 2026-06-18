@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>F3 Moderne — Agence Immobilière Hamdaoui</title>
+<link rel="stylesheet" href="style.css">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<script src="transitions.js"></script>
+</head>
+<body>
+
+<nav>
+  <span class="logo-wrap"><img src="./logo.png" class="logo"></span>
+  <div class="links">
+    <a href="index.html">Accueil</a>
+    <a href="offres.html">Offres</a>
+    <a href="appartements.html" class="active">Appartements</a>
+    <a href="booking.html">Booking</a>
+  </div>
+</nav>
+
+<div class="detail-top">
+  <a href="appartements.html" class="detail-back">
+    <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+    Retour aux appartements
+  </a>
+</div>
+
+<div class="detail-gallery">
+  <div class="main-photo">
+    <img src="https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=900&q=85" alt="Séjour F3" onclick="openLightbox(this.src)">
+  </div>
+  <div class="side-photo">
+    <img src="https://images.unsplash.com/photo-1484154218962-a197022b5858?w=500&q=80" alt="Cuisine F3" onclick="openLightbox(this.src)">
+  </div>
+  <div class="side-photo">
+    <img src="https://images.unsplash.com/photo-1588880331179-bc9b93a8cb5e?w=500&q=80" alt="Chambre F3" onclick="openLightbox(this.src)">
+  </div>
+</div>
+
+<div class="detail-layout">
+
+  <div class="detail-main">
+    <h1>F3 Moderne</h1>
+    <div class="detail-meta">
+      <span class="detail-location">
+        <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+        Quartier El Amir, Souk Ahras
+      </span>
+      <span class="detail-badge">F3 · Vente</span>
+      <span class="detail-badge">Disponible</span>
+    </div>
+
+    <div class="detail-price">18 000 000 DA</div>
+
+    <div class="detail-specs">
+      <div class="spec-item">
+        <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+        <strong>95 m²</strong>
+        <span>Surface</span>
+      </div>
+      <div class="spec-item">
+        <svg viewBox="0 0 24 24"><path d="M7 13c1.66 0 3-1.34 3-3S8.66 7 7 7s-3 1.34-3 3 1.34 3 3 3zm12-6h-8v7H3V5H1v15h2v-3h18v3h2v-9c0-2.21-1.79-4-4-4z"/></svg>
+        <strong>2</strong>
+        <span>Chambres</span>
+      </div>
+      <div class="spec-item">
+        <svg viewBox="0 0 24 24"><path d="M21 10H7V7c0-1.1.9-2 2-2s2 .9 2 2h2c0-2.21-1.79-4-4-4S5 4.79 5 7v3H3c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2v-8c0-1.1-.9-2-2-2z"/></svg>
+        <strong>2</strong>
+        <span>Salles de bain</span>
+      </div>
+    </div>
+
+    <div class="detail-description">
+      <h2>Description</h2>
+      <p>Superbe appartement F3 de standing, situé dans le quartier El Amir, l'un des quartiers les plus prisés de Souk Ahras. Entièrement rénové avec des matériaux de qualité, il propose un grand séjour lumineux avec vue dégagée, deux chambres bien dimensionnées, une cuisine moderne équipée et deux salles de bain. Immeuble sécurisé avec gardien. Parking sous-sol inclus. Idéal pour une famille.</p>
+    </div>
+
+    <div class="detail-map">
+      <h2>Localisation</h2>
+      <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3196.8686583369986!2d5.061999075115498!3d36.74972357226159!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x12f2cd002df7b777%3A0x5886d7f45b92cae4!2sAgence%20immobili%C3%A8re%20Hamdaoui%20Zoubir!5e0!3m2!1sfr!2sdz!4v1781743964196!5m2!1sfr!2sdz" allowfullscreen="" loading="lazy"></iframe>
+    </div>
+  </div>
+
+  <div class="detail-sidebar">
+    <div class="sidebar-card">
+      <h3>Intéressé par ce bien ?</h3>
+      <div class="sidebar-price">18 000 000 DA</div>
+      <a href="booking.html" class="sidebar-btn">Réserver une visite</a>
+      <a href="https://wa.me/213XXXXXXXXX" class="sidebar-btn-secondary" target="_blank">Contacter par WhatsApp</a>
+      <div class="sidebar-features">
+        <div class="sidebar-feature">
+          <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg>
+          Bien vérifié par l'agence
+        </div>
+        <div class="sidebar-feature">
+          <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+          Réponse sous 24h
+        </div>
+        <div class="sidebar-feature">
+          <svg viewBox="0 0 24 24"><path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z"/></svg>
+          Visite 7j/7 sur rendez-vous
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <button class="lightbox-close" onclick="closeLightbox()">×</button>
+  <img id="lightboxImg" src="" alt="">
+</div>
+
+<a href="https://wa.me/213XXXXXXXXX" class="whatsapp" target="_blank">
+  <svg viewBox="0 0 32 32"><path fill="#06140c" d="M16.004 3C9.376 3 4 8.373 4 15c0 2.39.704 4.613 1.92 6.49L4 29l7.73-1.873A11.93 11.93 0 0 0 16.004 27C22.63 27 28 21.627 28 15S22.63 3 16.004 3Zm6.97 16.97c-.297.836-1.47 1.59-2.03 1.677-.52.08-1.17.114-1.886-.117-.435-.14-.994-.327-1.71-.64-3.01-1.3-4.973-4.33-5.122-4.532-.148-.2-1.216-1.616-1.216-3.08 0-1.465.77-2.183 1.043-2.482.272-.298.594-.373.792-.373.198 0 .396.002.569.01.182.01.426-.07.668.51.248.594.84 2.06.916 2.21.074.15.124.327.025.523-.1.198-.15.322-.297.495-.148.174-.31.39-.445.524-.148.148-.302.31-.13.61.173.297.77 1.27 1.654 2.058 1.137 1.013 2.095 1.327 2.394 1.476.297.148.471.124.643-.074.173-.198.74-.864.94-1.16.198-.298.396-.248.668-.149.272.1 1.738.82 2.034.968.297.149.495.223.569.347.074.124.074.717-.223 1.553Z"/></svg>
+  WhatsApp
+</a>
+<footer><p>© Agence Immobilière Hamdaoui Depuis 1994</p></footer>
+
+<script>
+function openLightbox(src){ document.getElementById('lightboxImg').src=src; document.getElementById('lightbox').classList.add('open'); document.body.style.overflow='hidden'; }
+function closeLightbox(){ document.getElementById('lightbox').classList.remove('open'); document.body.style.overflow=''; }
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeLightbox(); });
+</script>
+</body>
+</html>
