@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mon espace — Agence Hamdaoui</title>
+<link rel="stylesheet" href="style.css">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<script src="transitions.js"></script>
+<script src="data.js"></script>
+</head>
+<body>
+
+<nav>
+  <span class="logo-wrap"><img src="./logo.png" class="logo"></span>
+  <div class="links">
+    <a href="index.html">Accueil</a>
+    <a href="offres.html">Offres</a>
+    <a href="appartements.html">Appartements</a>
+    <a href="booking.html">Booking</a>
+    <a href="espace-client.html" class="active">Mon espace</a>
+  </div>
+</nav>
+
+<div style="background:var(--navy-900);border-bottom:1px solid var(--line);padding:18px 24px 0;">
+  <div style="max-width:1000px;margin:0 auto;">
+    <p style="color:var(--ivory-faint);font-size:13px;margin:0 0 18px;">
+      <a href="index.html" style="color:var(--ivory-faint);text-decoration:none;">Accueil</a>
+      <span style="margin:0 8px;">›</span> Mon espace client
+    </p>
+  </div>
+</div>
+
+<div class="client-layout">
+
+  <!-- Welcome bar -->
+  <div class="client-welcome">
+    <div class="client-welcome-text">
+      <h2 id="welcomeName">Bonjour</h2>
+      <p id="welcomeEmail">—</p>
+    </div>
+    <div class="client-summary">
+      <div class="client-summary-item">
+        <strong id="totalBiens">0</strong>
+        <span>Bien(s) confié(s)</span>
+      </div>
+      <div class="client-summary-item">
+        <strong id="totalRecuperable">0</strong>
+        <span>DA à récupérer</span>
+      </div>
+    </div>
+    <button class="btn-danger" style="align-self:center;" onclick="DB.clearSession();window.location.href='login.html'">
+      Déconnexion
+    </button>
+  </div>
+
+  <!-- Property cards -->
+  <div id="clientPropsContainer">
+    <p class="no-properties">Chargement...</p>
+  </div>
+
+</div>
+
+<a href="https://wa.me/213XXXXXXXXX" class="whatsapp" target="_blank">
+  <svg viewBox="0 0 32 32"><path fill="#06140c" d="M16.004 3C9.376 3 4 8.373 4 15c0 2.39.704 4.613 1.92 6.49L4 29l7.73-1.873A11.93 11.93 0 0 0 16.004 27C22.63 27 28 21.627 28 15S22.63 3 16.004 3Zm6.97 16.97c-.297.836-1.47 1.59-2.03 1.677-.52.08-1.17.114-1.886-.117-.435-.14-.994-.327-1.71-.64-3.01-1.3-4.973-4.33-5.122-4.532-.148-.2-1.216-1.616-1.216-3.08 0-1.465.77-2.183 1.043-2.482.272-.298.594-.373.792-.373.198 0 .396.002.569.01.182.01.426-.07.668.51.248.594.84 2.06.916 2.21.074.15.124.327.025.523-.1.198-.15.322-.297.495-.148.174-.31.39-.445.524-.148.148-.302.31-.13.61.173.297.77 1.27 1.654 2.058 1.137 1.013 2.095 1.327 2.394 1.476.297.148.471.124.643-.074.173-.198.74-.864.94-1.16.198-.298.396-.248.668-.149.272.1 1.738.82 2.034.968.297.149.495.223.569.347.074.124.074.717-.223 1.553Z"/></svg>
+  WhatsApp
+</a>
+
+<footer><p>© Agence Immobilière Hamdaoui Depuis 1994</p></footer>
+
+<script>
+// Auth check
+const session = DB.requireAuth();
+if (session.role === 'admin') { window.location.href = 'admin.html'; }
+
+// Welcome
+document.getElementById('welcomeName').textContent = 'Bonjour, ' + session.name.split(' ')[0] + ' 👋';
+document.getElementById('welcomeEmail').textContent = session.email;
+
+// Steps definition
+const STEPS = [
+  { key: 'nouveau',      label: 'Nouveau' },
+  { key: 'en_recherche', label: 'En recherche' },
+  { key: 'visites',      label: 'Visites' },
+  { key: 'negociation',  label: 'Négociation' },
+  { key: 'loue',         label: 'Loué ✓' }
+];
+
+function renderClientDashboard() {
+  const props = DB.getClientProperties(session.id);
+  const container = document.getElementById('clientPropsContainer');
+
+  // Summary stats
+  document.getElementById('totalBiens').textContent = props.length;
+  const totalRecup = props
+    .filter(p => p.status === 'loue' || p.status === 'vendu')
+    .reduce((sum, p) => sum + (parseInt((p.recoveryAmount||'0').replace(/\s/g,'')) || 0), 0);
+  document.getElementById('totalRecuperable').textContent =
+    totalRecup > 0 ? totalRecup.toLocaleString('fr-FR') : '0';
+
+  if (!props.length) {
+    container.innerHTML = `
+      <div class="no-properties">
+        <svg style="width:48px;height:48px;fill:var(--ivory-faint);margin-bottom:16px;" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+        <p>Aucun bien confié à l'agence pour le moment.</p>
+        <p style="font-size:13px;margin-top:8px;">Contactez-nous pour confier votre bien.</p>
+        <a href="https://wa.me/213XXXXXXXXX" class="btn" style="display:inline-block;margin-top:20px;font-size:14px;">Contacter l'agence</a>
+      </div>`;
+    return;
+  }
+
+  container.innerHTML = props.map(p => {
+    const currentStepIdx = STEPS.findIndex(s => s.key === p.status);
+    const isFinal = p.status === 'vendu';
+
+    // Steps HTML
+    const stepsHtml = STEPS.map((step, i) => {
+      let cls = '';
+      if (i < currentStepIdx) cls = 'done';
+      else if (i === currentStepIdx) cls = 'current';
+      return `
+        <div class="dossier-step ${cls}">
+          <div class="step-dot">${i < currentStepIdx ? '✓' : i+1}</div>
+          <div class="step-label">${step.label}</div>
+        </div>`;
+    }).join('');
+
+    const statusBadgeClass =
+      p.status === 'loue' || p.status === 'vendu' ? 'status-approved' :
+      p.status === 'nouveau' ? 'status-pending' : 'status-refused';
+
+    const isLoueOrVendu = p.status === 'loue' || p.status === 'vendu';
+
+    return `
+      <div class="client-property-card">
+
+        <div class="client-property-header">
+          <div class="client-property-title">
+            <h3>${p.title}</h3>
+            <span>${p.location} · ${p.transaction || ''}</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+            <span class="status-badge ${statusBadgeClass}">${DB.statusLabel(p.status)}</span>
+            ${p.statusDate ? `<span style="font-size:12px;color:var(--ivory-faint);">Mis à jour le ${p.statusDate}</span>` : ''}
+          </div>
+        </div>
+
+        <!-- Progress bar -->
+        <div class="dossier-steps">${stepsHtml}</div>
+
+        <!-- Details row -->
+        <div class="client-property-details">
+          <div class="client-detail-item">
+            <label>Prix estimé</label>
+            <strong>${p.estimatedPrice ? p.estimatedPrice + ' DA' : '—'}</strong>
+          </div>
+
+          ${isLoueOrVendu ? `
+          <div class="client-detail-item highlight">
+            <label>Montant à récupérer</label>
+            <strong>${p.recoveryAmount ? p.recoveryAmount + ' DA' : 'À préciser'}</strong>
+          </div>
+          <div class="client-detail-item">
+            <label>Date de récupération</label>
+            <strong>${p.recoveryDate || 'À confirmer'}</strong>
+          </div>
+          <div class="client-detail-item">
+            <label>Reçu de versement</label>
+            <strong>
+              ${p.receiptUrl
+                ? `<a href="${p.receiptUrl}" target="_blank" class="pdf-download-btn">
+                    <svg viewBox="0 0 24 24"><path d="M20 2H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-8.5 7.5c0 .83-.67 1.5-1.5 1.5H9v2H7.5V7H10c.83 0 1.5.67 1.5 1.5v1zm5 2c0 .83-.67 1.5-1.5 1.5h-2.5V7H15c.83 0 1.5.67 1.5 1.5v3zm4-3H19v1h1.5V11H19v2h-1.5V7h3v1.5zM9 9.5h1v-1H9v1zM13 9h1.5v3H13V9z"/></svg>
+                    Télécharger le reçu
+                  </a>`
+                : '<span style="color:var(--ivory-faint);font-size:13px;font-weight:300;">En attente</span>'}
+            </strong>
+          </div>` : `
+          <div class="client-detail-item">
+            <label>Statut du dossier</label>
+            <strong style="color:var(--ivory-dim);font-weight:400;font-size:14px;">Votre dossier est en cours de traitement. Nous vous contacterons dès qu'il y a du nouveau.</strong>
+          </div>`}
+        </div>
+
+      </div>`;
+  }).join('');
+}
+
+renderClientDashboard();
+</script>
+
+</body>
+</html>

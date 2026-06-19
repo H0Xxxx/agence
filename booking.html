@@ -14,6 +14,7 @@
 
 <!-- Page loader + transitions -->
 <script src="transitions.js"></script>
+<script src="data.js"></script>
 
 </head>
 
@@ -120,3 +121,23 @@ WhatsApp
 </body>
 
 </html>
+<script>
+// Override script.js form submit pour sauvegarder dans DB
+const _form = document.getElementById('bookingForm');
+if (_form) {
+  _form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const pending = {
+      name:    document.getElementById('name').value,
+      phone:   document.getElementById('phone').value,
+      service: document.getElementById('service').value,
+      date:    document.getElementById('date').value,
+      time:    document.getElementById('time').value
+    };
+    // Save to DB
+    DB.addBooking(pending);
+    // Show modal
+    document.getElementById('confirmModal').style.display = 'flex';
+  });
+}
+</script>

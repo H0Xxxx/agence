@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin — Agence Immobilière Hamdaoui</title>
+<link rel="stylesheet" href="style.css">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<script src="data.js"></script>
+</head>
+<body style="opacity:1;transform:none;">
+
+<div class="admin-layout">
+
+  <!-- SIDEBAR -->
+  <aside class="admin-sidebar">
+    <div class="admin-sidebar-logo">
+      <span>AH</span>
+      <strong>Hamdaoui Admin</strong>
+    </div>
+    <nav class="admin-nav">
+      <div class="admin-nav-label">Navigation</div>
+      <a onclick="showPanel('dashboard')" class="active" id="nav-dashboard">
+        <svg viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
+        Tableau de bord
+      </a>
+      <a onclick="showPanel('properties')" id="nav-properties">
+        <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+        Biens en ligne
+      </a>
+      <a onclick="showPanel('client-props')" id="nav-client-props">
+        <svg viewBox="0 0 24 24"><path d="M20 6h-2.18c.07-.44.18-.88.18-1.34C18 2.54 15.46 0 12.34 0c-1.54 0-2.9.64-3.9 1.67L7 3H4C2.34 3 1 4.34 1 6v14c0 1.66 1.34 3 3 3h16c1.66 0 3-1.34 3-3V9c0-1.66-1.34-3-3-3zM9.88 2.75C10.44 2.28 11.15 2 11.9 2c1.72 0 3.1 1.39 3.1 3.1 0 1.72-1.38 3.1-3.1 3.1-1.71 0-3.1-1.38-3.1-3.1 0-.55.15-1.07.4-1.5L9.88 2.75z"/></svg>
+        Biens clients
+        <span id="clientPropsBadge" style="margin-left:auto;background:rgba(201,161,90,0.2);color:var(--copper-light);border-radius:999px;font-size:11px;font-weight:700;padding:2px 9px;display:none;"></span>
+      </a>
+      <a onclick="showPanel('bookings')" id="nav-bookings">
+        <svg viewBox="0 0 24 24"><path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z"/></svg>
+        Réservations
+        <span id="bookingsBadge" style="margin-left:auto;background:rgba(255,200,50,0.2);color:#ffd166;border-radius:999px;font-size:11px;font-weight:700;padding:2px 9px;display:none;"></span>
+      </a>
+      <a onclick="showPanel('reviews')" id="nav-reviews">
+        <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+        Avis clients
+        <span id="pendingBadge" style="margin-left:auto;background:rgba(255,200,50,0.2);color:#ffd166;border-radius:999px;font-size:11px;font-weight:700;padding:2px 9px;display:none;"></span>
+      </a>
+      <a onclick="showPanel('users')" id="nav-users">
+        <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+        Utilisateurs
+      </a>
+    </nav>
+    <div class="admin-logout">
+      <a href="index.html">
+        <svg viewBox="0 0 24 24"><path d="M10 9V5l-7 7 7 7v-4.1c5 0 8.5 1.6 11 5.1-1-5-4-10-11-11z"/></svg>
+        Retour au site
+      </a>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="admin-main">
+    <div class="admin-topbar">
+      <h1 id="panelTitle">Tableau de bord</h1>
+      <div style="display:flex;align-items:center;gap:14px;">
+        <span class="admin-badge" id="adminName"></span>
+        <button class="btn-danger" onclick="DB.clearSession();window.location.href='login.html'">Déconnexion</button>
+      </div>
+    </div>
+
+    <div class="admin-content">
+
+      <!-- ===== DASHBOARD ===== -->
+      <div class="admin-panel active" id="panel-dashboard">
+        <div class="stats-grid" id="statsGrid"></div>
+        <div style="background:linear-gradient(160deg,var(--navy-800),var(--navy-700));border:1px solid var(--line);border-radius:16px;padding:28px 26px;margin-top:8px;">
+          <h2 style="font-size:1rem;color:var(--ivory);margin-bottom:16px;">Accès rapide</h2>
+          <div style="display:flex;gap:12px;flex-wrap:wrap;">
+            <button class="btn-primary" onclick="showPanel('properties');openPropertyForm()">+ Ajouter un bien</button>
+            <button class="btn-primary" onclick="showPanel('client-props');openClientPropForm()">+ Bien client</button>
+            <button class="btn-primary" onclick="showPanel('bookings')">Voir les réservations</button>
+            <button class="btn-primary" onclick="showPanel('reviews')">Avis en attente</button>
+            <button class="btn-primary" onclick="showPanel('users');openUserForm()">+ Utilisateur</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== PROPERTIES ===== -->
+      <div class="admin-panel" id="panel-properties">
+        <div class="panel-header">
+          <h2>Biens en ligne</h2>
+          <button class="btn-primary" onclick="openPropertyForm()">+ Ajouter un bien</button>
+        </div>
+        <div style="overflow-x:auto;">
+          <table class="admin-table">
+            <thead><tr><th>Bien</th><th>Type</th><th>Transaction</th><th>Localisation</th><th>Prix (DA)</th><th>Statut</th><th>Actions</th></tr></thead>
+            <tbody id="propertiesTable"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ===== CLIENT PROPERTIES ===== -->
+      <div class="admin-panel" id="panel-client-props">
+        <div class="panel-header">
+          <h2>Biens confiés par les clients</h2>
+          <button class="btn-primary" onclick="openClientPropForm()">+ Ajouter un bien client</button>
+        </div>
+        <div style="overflow-x:auto;">
+          <table class="admin-table">
+            <thead><tr><th>Bien</th><th>Client</th><th>Transaction</th><th>Statut dossier</th><th>Montant à récupérer</th><th>Date récup.</th><th>Reçu PDF</th><th>Actions</th></tr></thead>
+            <tbody id="clientPropsTable"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ===== BOOKINGS ===== -->
+      <div class="admin-panel" id="panel-bookings">
+        <div class="panel-header"><h2>Réservations de visites</h2></div>
+        <div style="overflow-x:auto;">
+          <table class="admin-table">
+            <thead><tr><th>Client</th><th>Téléphone</th><th>Service</th><th>Date</th><th>Heure</th><th>Statut</th><th>Actions</th></tr></thead>
+            <tbody id="bookingsTable"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ===== REVIEWS ===== -->
+      <div class="admin-panel" id="panel-reviews">
+        <div class="panel-header"><h2>Avis clients</h2></div>
+        <div style="overflow-x:auto;">
+          <table class="admin-table">
+            <thead><tr><th>Client</th><th>Avis</th><th>Note</th><th>Date</th><th>Statut</th><th>Actions</th></tr></thead>
+            <tbody id="reviewsTable"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ===== USERS ===== -->
+      <div class="admin-panel" id="panel-users">
+        <div class="panel-header">
+          <h2>Utilisateurs</h2>
+          <button class="btn-primary" onclick="openUserForm()">+ Ajouter un utilisateur</button>
+        </div>
+        <div style="overflow-x:auto;">
+          <table class="admin-table">
+            <thead><tr><th>Nom</th><th>E-mail</th><th>Rôle</th><th>Note</th></tr></thead>
+            <tbody id="usersTable"></tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<!-- MODAL : Bien en ligne -->
+<div class="form-modal-overlay" id="propertyModal">
+  <div class="form-modal">
+    <h3>Ajouter un bien en ligne</h3>
+    <div class="form-group"><label>Titre</label><input type="text" id="p_title" placeholder="Ex : F3 Moderne Centre Ville"></div>
+    <div class="form-row">
+      <div class="form-group"><label>Type</label><select id="p_type"><option value="f2">F2</option><option value="f3">F3</option><option value="f4">F4</option><option value="villa">Villa</option><option value="studio">Studio</option><option value="local">Local commercial</option></select></div>
+      <div class="form-group"><label>Transaction</label><select id="p_transaction"><option value="Vente">Vente</option><option value="Location">Location</option></select></div>
+    </div>
+    <div class="form-group"><label>Localisation</label><input type="text" id="p_location" placeholder="Ex : Centre Ville, Souk Ahras"></div>
+    <div class="form-row">
+      <div class="form-group"><label>Prix (DA)</label><input type="text" id="p_price" placeholder="12 000 000"></div>
+      <div class="form-group"><label>Surface (m²)</label><input type="text" id="p_surface" placeholder="85"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Chambres</label><input type="number" id="p_rooms" placeholder="2" min="0"></div>
+      <div class="form-group"><label>Salles de bain</label><input type="number" id="p_bathrooms" placeholder="1" min="0"></div>
+    </div>
+    <div class="form-group"><label>Description</label><textarea id="p_description" placeholder="Description..."></textarea></div>
+    <div class="form-group"><label>URL photo principale</label><input type="url" id="p_image" placeholder="https://..."></div>
+    <div class="form-actions">
+      <button class="btn-cancel" onclick="closePropertyForm()">Annuler</button>
+      <button class="btn-primary" onclick="saveProperty()">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL : Bien client -->
+<div class="form-modal-overlay" id="clientPropModal">
+  <div class="form-modal">
+    <h3 id="clientPropModalTitle">Ajouter un bien client</h3>
+    <div class="form-row">
+      <div class="form-group"><label>Client (utilisateur)</label>
+        <select id="cp_client" style="width:100%;padding:12px 14px;border:1px solid var(--navy-600);border-radius:10px;background:var(--navy-900);color:var(--ivory);font-family:inherit;font-size:14px;" id="cp_client"></select>
+      </div>
+      <div class="form-group"><label>Transaction</label>
+        <select id="cp_transaction" style="width:100%;padding:12px 14px;border:1px solid var(--navy-600);border-radius:10px;background:var(--navy-900);color:var(--ivory);font-family:inherit;font-size:14px;">
+          <option value="Location">Location</option>
+          <option value="Vente">Vente</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group"><label>Titre du bien</label><input type="text" id="cp_title" placeholder="Ex : F3 Centre Ville"></div>
+    <div class="form-group"><label>Localisation</label><input type="text" id="cp_location" placeholder="Ex : Centre Ville, Souk Ahras"></div>
+    <div class="form-row">
+      <div class="form-group"><label>Type</label>
+        <select id="cp_type" style="width:100%;padding:12px 14px;border:1px solid var(--navy-600);border-radius:10px;background:var(--navy-900);color:var(--ivory);font-family:inherit;font-size:14px;">
+          <option value="studio">Studio</option><option value="f2">F2</option><option value="f3">F3</option><option value="f4">F4</option><option value="villa">Villa</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Prix estimé (DA)</label><input type="text" id="cp_price" placeholder="18 000 000"></div>
+    </div>
+    <div class="form-group"><label>Statut dossier</label>
+      <select id="cp_status" style="width:100%;padding:12px 14px;border:1px solid var(--navy-600);border-radius:10px;background:var(--navy-900);color:var(--ivory);font-family:inherit;font-size:14px;">
+        <option value="nouveau">Nouveau</option>
+        <option value="en_recherche">En recherche</option>
+        <option value="visites">Visites</option>
+        <option value="negociation">Négociation</option>
+        <option value="loue">Loué</option>
+        <option value="vendu">Vendu</option>
+      </select>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Montant à récupérer (DA)</label><input type="text" id="cp_recovery" placeholder="1 200 000"></div>
+      <div class="form-group"><label>Date de récupération</label><input type="date" id="cp_recoveryDate"></div>
+    </div>
+    <div class="form-group"><label>Reçu PDF (URL ou lien Google Drive)</label><input type="url" id="cp_receipt" placeholder="https://drive.google.com/..."></div>
+    <div class="form-group"><label>Notes internes</label><textarea id="cp_notes" placeholder="Notes visibles uniquement par l'admin..."></textarea></div>
+    <div class="form-actions">
+      <button class="btn-cancel" onclick="closeClientPropForm()">Annuler</button>
+      <button class="btn-primary" id="cpSaveBtn" onclick="saveClientProp()">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL : Utilisateur -->
+<div class="form-modal-overlay" id="userModal">
+  <div class="form-modal">
+    <h3>Ajouter un utilisateur</h3>
+    <div class="form-group"><label>Nom complet</label><input type="text" id="u_name" placeholder="Prénom Nom"></div>
+    <div class="form-group"><label>Adresse e-mail</label><input type="email" id="u_email" placeholder="client@email.com"></div>
+    <div class="form-row">
+      <div class="form-group"><label>Mot de passe</label><input type="password" id="u_password" placeholder="Minimum 6 caractères"></div>
+      <div class="form-group"><label>Rôle</label>
+        <select id="u_role" style="width:100%;padding:12px 14px;border:1px solid var(--navy-600);border-radius:10px;background:var(--navy-900);color:var(--ivory);font-family:inherit;font-size:14px;">
+          <option value="client">Client</option><option value="admin">Admin</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-actions">
+      <button class="btn-cancel" onclick="closeUserForm()">Annuler</button>
+      <button class="btn-primary" onclick="saveUser()">Créer le compte</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const session = DB.requireAdmin();
+document.getElementById('adminName').textContent = session.name;
+
+// ---- NAVIGATION ----
+function showPanel(name) {
+  document.querySelectorAll('.admin-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.admin-nav a').forEach(a => a.classList.remove('active'));
+  document.getElementById('panel-' + name).classList.add('active');
+  document.getElementById('nav-' + name).classList.add('active');
+  const titles = {
+    dashboard:'Tableau de bord', properties:'Biens en ligne',
+    'client-props':'Biens clients', bookings:'Réservations',
+    reviews:'Avis clients', users:'Utilisateurs'
+  };
+  document.getElementById('panelTitle').textContent = titles[name] || name;
+  if (name==='properties')    renderProperties();
+  if (name==='client-props')  renderClientProps();
+  if (name==='bookings')      renderBookings();
+  if (name==='reviews')       renderReviews();
+  if (name==='users')         renderUsers();
+}
+
+// ---- STATS DASHBOARD ----
+function renderDashboard() {
+  const s = DB.getStats();
+  const pending = DB.getPendingReviews().length;
+  const pendingBookings = s.pendingBookings;
+
+  // Badges sidebar
+  if (pending > 0) { document.getElementById('pendingBadge').style.display='inline'; document.getElementById('pendingBadge').textContent=pending; }
+  if (pendingBookings > 0) { document.getElementById('bookingsBadge').style.display='inline'; document.getElementById('bookingsBadge').textContent=pendingBookings; }
+  const cpPending = DB.getAllClientProperties().filter(p=>p.status==='nouveau').length;
+  if (cpPending > 0) { document.getElementById('clientPropsBadge').style.display='inline'; document.getElementById('clientPropsBadge').textContent=cpPending; }
+
+  document.getElementById('statsGrid').innerHTML = `
+    <div class="stat-card">
+      <div class="stat-icon"><svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg></div>
+      <strong>${s.totalProps}</strong>
+      <span>Biens en ligne</span>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon"><svg viewBox="0 0 24 24"><path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z"/></svg></div>
+      <strong>${s.totalBookings}</strong>
+      <span>Réservations reçues</span>
+      <span class="stat-trend trend-neutral">${s.confirmedBookings} confirmées</span>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon"><svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg></div>
+      <strong>${s.loucedCount}</strong>
+      <span>Appartements loués</span>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon"><svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg></div>
+      <strong>${s.conversionRate}%</strong>
+      <span>Taux de conversion</span>
+      <span class="stat-trend ${s.conversionRate>=50?'trend-up':'trend-neutral'}">${s.conversionRate>=50?'↑ Bon':'En cours'}</span>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon"><svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg></div>
+      <strong>${s.approvedReviews}</strong>
+      <span>Avis approuvés</span>
+      ${pending>0?`<span class="stat-trend trend-neutral">${pending} en attente</span>`:''}
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon"><svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg></div>
+      <strong>${s.totalUsers}</strong>
+      <span>Utilisateurs</span>
+    </div>
+  `;
+}
+
+renderDashboard();
+
+// ---- PROPERTIES ----
+function renderProperties() {
+  const props = DB.getProperties();
+  const tbody = document.getElementById('propertiesTable');
+  if (!props.length) { tbody.innerHTML='<tr><td colspan="7" style="text-align:center;color:var(--ivory-faint);padding:32px;">Aucun bien.</td></tr>'; return; }
+  tbody.innerHTML = props.map(p => `
+    <tr>
+      <td><strong>${p.title}</strong></td>
+      <td>${(p.type||'').toUpperCase()}</td>
+      <td><span class="status-badge ${p.badge&&p.badge.includes('Location')?'status-pending':'status-approved'}">${p.badge||'—'}</span></td>
+      <td>${p.location}</td>
+      <td style="color:var(--copper-light);font-weight:600;">${p.price} DA</td>
+      <td><span class="status-badge ${p.available?'status-approved':'status-refused'}">${p.available?'Disponible':'Indisponible'}</span></td>
+      <td><button class="btn-danger" onclick="deleteProperty(${p.id})">Supprimer</button></td>
+    </tr>`).join('');
+}
+
+function openPropertyForm() { document.getElementById('propertyModal').classList.add('open'); }
+function closePropertyForm() { document.getElementById('propertyModal').classList.remove('open'); }
+
+function saveProperty() {
+  const title=document.getElementById('p_title').value.trim();
+  const loc=document.getElementById('p_location').value.trim();
+  const price=document.getElementById('p_price').value.trim();
+  if (!title||!loc||!price) { alert('Titre, localisation et prix sont obligatoires.'); return; }
+  const type=document.getElementById('p_type').value;
+  const trans=document.getElementById('p_transaction').value;
+  DB.addProperty({ title, type, location:loc, price,
+    surface:document.getElementById('p_surface').value.trim(),
+    rooms:document.getElementById('p_rooms').value,
+    bathrooms:document.getElementById('p_bathrooms').value,
+    description:document.getElementById('p_description').value.trim(),
+    image:document.getElementById('p_image').value.trim()||'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=600&q=80',
+    badge:`${type.toUpperCase()} · ${trans}`
+  });
+  closePropertyForm();
+  renderProperties();
+  renderDashboard();
+  ['p_title','p_location','p_price','p_surface','p_rooms','p_bathrooms','p_description','p_image'].forEach(id=>document.getElementById(id).value='');
+}
+
+function deleteProperty(id) {
+  if (!confirm('Supprimer ce bien ?')) return;
+  DB.deleteProperty(id); renderProperties(); renderDashboard();
+}
+
+// ---- CLIENT PROPERTIES ----
+let editingCpId = null;
+
+function renderClientProps() {
+  const props = DB.getAllClientProperties();
+  const users = DB.getUsers().filter(u=>u.role==='client');
+  const tbody = document.getElementById('clientPropsTable');
+  if (!props.length) { tbody.innerHTML='<tr><td colspan="8" style="text-align:center;color:var(--ivory-faint);padding:32px;">Aucun bien client.</td></tr>'; return; }
+  tbody.innerHTML = props.map(p => {
+    const client = DB.getUsers().find(u=>u.id===p.clientId);
+    const statusClass = p.status==='loue'||p.status==='vendu' ? 'status-approved' : p.status==='nouveau' ? 'status-pending' : 'status-refused';
+    return `<tr>
+      <td><strong>${p.title}</strong><br><span style="font-size:12px;color:var(--ivory-faint);">${p.location}</span></td>
+      <td>${client?client.name:'—'}</td>
+      <td>${p.transaction||'—'}</td>
+      <td><span class="status-badge ${statusClass}">${DB.statusLabel(p.status)}</span></td>
+      <td style="color:var(--copper-light);font-weight:600;">${p.recoveryAmount?p.recoveryAmount+' DA':'—'}</td>
+      <td style="font-size:13px;">${p.recoveryDate||'—'}</td>
+      <td>${p.receiptUrl?`<a href="${p.receiptUrl}" target="_blank" class="pdf-download-btn"><svg viewBox="0 0 24 24"><path d="M20 2H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-8.5 7.5c0 .83-.67 1.5-1.5 1.5H9v2H7.5V7H10c.83 0 1.5.67 1.5 1.5v1zm5 2c0 .83-.67 1.5-1.5 1.5h-2.5V7H15c.83 0 1.5.67 1.5 1.5v3zm4-3H19v1h1.5V11H19v2h-1.5V7h3v1.5zM9 9.5h1v-1H9v1zM13 9h1.5v3H13V9z"/></svg>Reçu</a>`:'<span style="color:var(--ivory-faint);font-size:12px;">Pas de reçu</span>'}</td>
+      <td style="display:flex;gap:6px;">
+        <button class="btn-success" onclick="openEditClientProp(${p.id})">✏ Modifier</button>
+        <button class="btn-danger" onclick="deleteClientProp(${p.id})">Supprimer</button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function openClientPropForm() {
+  editingCpId = null;
+  document.getElementById('clientPropModalTitle').textContent = 'Ajouter un bien client';
+  document.getElementById('cpSaveBtn').textContent = 'Enregistrer';
+  // Populate client select
+  const sel = document.getElementById('cp_client');
+  sel.innerHTML = DB.getUsers().filter(u=>u.role==='client').map(u=>`<option value="${u.id}">${u.name} (${u.email})</option>`).join('');
+  ['cp_title','cp_location','cp_price','cp_recovery','cp_receipt','cp_notes'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('cp_recoveryDate').value='';
+  document.getElementById('clientPropModal').classList.add('open');
+}
+
+function openEditClientProp(id) {
+  editingCpId = id;
+  const p = DB.getAllClientProperties().find(x=>x.id===id);
+  if (!p) return;
+  document.getElementById('clientPropModalTitle').textContent = 'Modifier le dossier';
+  document.getElementById('cpSaveBtn').textContent = 'Mettre à jour';
+  const sel = document.getElementById('cp_client');
+  sel.innerHTML = DB.getUsers().filter(u=>u.role==='client').map(u=>`<option value="${u.id}" ${u.id===p.clientId?'selected':''}>${u.name} (${u.email})</option>`).join('');
+  document.getElementById('cp_title').value      = p.title||'';
+  document.getElementById('cp_location').value   = p.location||'';
+  document.getElementById('cp_price').value      = p.estimatedPrice||'';
+  document.getElementById('cp_recovery').value   = p.recoveryAmount||'';
+  document.getElementById('cp_recoveryDate').value = p.recoveryDate||'';
+  document.getElementById('cp_receipt').value    = p.receiptUrl||'';
+  document.getElementById('cp_notes').value      = p.notes||'';
+  document.getElementById('cp_status').value     = p.status||'nouveau';
+  document.getElementById('cp_transaction').value= p.transaction||'Location';
+  document.getElementById('cp_type').value       = p.type||'f3';
+  document.getElementById('clientPropModal').classList.add('open');
+}
+
+function closeClientPropForm() { document.getElementById('clientPropModal').classList.remove('open'); editingCpId=null; }
+
+function saveClientProp() {
+  const title = document.getElementById('cp_title').value.trim();
+  const loc   = document.getElementById('cp_location').value.trim();
+  if (!title||!loc) { alert('Titre et localisation sont obligatoires.'); return; }
+  const data = {
+    clientId:       parseInt(document.getElementById('cp_client').value),
+    title, location: loc,
+    type:           document.getElementById('cp_type').value,
+    transaction:    document.getElementById('cp_transaction').value,
+    estimatedPrice: document.getElementById('cp_price').value.trim(),
+    status:         document.getElementById('cp_status').value,
+    recoveryAmount: document.getElementById('cp_recovery').value.trim(),
+    recoveryDate:   document.getElementById('cp_recoveryDate').value,
+    receiptUrl:     document.getElementById('cp_receipt').value.trim(),
+    notes:          document.getElementById('cp_notes').value.trim()
+  };
+  if (editingCpId) {
+    DB.updateClientProperty(editingCpId, data);
+  } else {
+    DB.addClientProperty(data);
+  }
+  closeClientPropForm();
+  renderClientProps();
+  renderDashboard();
+}
+
+function deleteClientProp(id) {
+  if (!confirm('Supprimer ce dossier client ?')) return;
+  DB.deleteClientProperty(id); renderClientProps(); renderDashboard();
+}
+
+// ---- BOOKINGS ----
+function renderBookings() {
+  const bookings = DB.getBookings();
+  const tbody    = document.getElementById('bookingsTable');
+  if (!bookings.length) { tbody.innerHTML='<tr><td colspan="7" style="text-align:center;color:var(--ivory-faint);padding:32px;">Aucune réservation.</td></tr>'; return; }
+  tbody.innerHTML = bookings.map(b => `
+    <tr>
+      <td><strong>${b.name}</strong></td>
+      <td>${b.phone}</td>
+      <td>${b.service}</td>
+      <td>${b.date}</td>
+      <td>${b.time}</td>
+      <td><span class="status-badge ${b.status==='confirmed'?'status-approved':b.status==='cancelled'?'status-refused':'status-pending'}">${b.status==='confirmed'?'Confirmée':b.status==='cancelled'?'Annulée':'En attente'}</span></td>
+      <td style="display:flex;gap:6px;">
+        ${b.status==='pending'?`<button class="btn-success" onclick="confirmBooking(${b.id})">✓ Confirmer</button><button class="btn-danger" onclick="cancelBooking(${b.id})">✗ Annuler</button>`:''}
+      </td>
+    </tr>`).join('');
+}
+
+function confirmBooking(id) { DB.confirmBooking(id); renderBookings(); renderDashboard(); }
+function cancelBooking(id)  { DB.cancelBooking(id);  renderBookings(); renderDashboard(); }
+
+// ---- REVIEWS ----
+function renderReviews() {
+  const reviews = DB.getReviews();
+  const tbody = document.getElementById('reviewsTable');
+  if (!reviews.length) { tbody.innerHTML='<tr><td colspan="6" style="text-align:center;color:var(--ivory-faint);padding:32px;">Aucun avis.</td></tr>'; return; }
+  tbody.innerHTML = reviews.map(r => `
+    <tr>
+      <td><strong>${r.name}</strong><br><span style="font-size:12px;color:var(--ivory-faint);">${r.context}</span></td>
+      <td style="max-width:260px;font-size:13px;">"${r.text.substring(0,80)}..."</td>
+      <td>${'★'.repeat(r.stars)}</td>
+      <td style="font-size:12.5px;">${r.date}</td>
+      <td><span class="status-badge status-${r.status}">${r.status==='pending'?'En attente':r.status==='approved'?'Approuvé':'Refusé'}</span></td>
+      <td style="display:flex;gap:6px;flex-wrap:wrap;">
+        ${r.status==='pending'?`<button class="btn-success" onclick="approveReview(${r.id})">✓</button><button class="btn-danger" onclick="refuseReview(${r.id})">✗</button>`:''}
+        <button class="btn-danger" onclick="deleteReview(${r.id})">Supprimer</button>
+      </td>
+    </tr>`).join('');
+}
+
+function approveReview(id) { DB.approveReview(id); renderReviews(); renderDashboard(); }
+function refuseReview(id)  { DB.refuseReview(id);  renderReviews(); renderDashboard(); }
+function deleteReview(id)  { if (!confirm('Supprimer ?')) return; DB.deleteReview(id); renderReviews(); renderDashboard(); }
+
+// ---- USERS ----
+function renderUsers() {
+  const users = DB.getUsers();
+  document.getElementById('usersTable').innerHTML = users.map(u => `
+    <tr>
+      <td><strong>${u.name}</strong></td>
+      <td>${u.email}</td>
+      <td><span class="status-badge ${u.role==='admin'?'status-approved':'status-pending'}">${u.role==='admin'?'Admin':'Client'}</span></td>
+      <td style="font-size:12.5px;color:var(--ivory-faint);">${u.id<=2?'Compte par défaut':'—'}</td>
+    </tr>`).join('');
+}
+
+function openUserForm()  { document.getElementById('userModal').classList.add('open'); }
+function closeUserForm() { document.getElementById('userModal').classList.remove('open'); }
+
+function saveUser() {
+  const name=document.getElementById('u_name').value.trim();
+  const email=document.getElementById('u_email').value.trim();
+  const pass=document.getElementById('u_password').value;
+  const role=document.getElementById('u_role').value;
+  if (!name||!email||!pass) { alert('Tous les champs sont obligatoires.'); return; }
+  if (DB.getUsers().find(u=>u.email===email)) { alert('E-mail déjà utilisé.'); return; }
+  DB.addUser({ name, email, password:pass, role });
+  closeUserForm();
+  renderUsers();
+  renderDashboard();
+  ['u_name','u_email','u_password'].forEach(id=>document.getElementById(id).value='');
+}
+
+// Fermer modals au clic dehors
+['propertyModal','clientPropModal','userModal'].forEach(id=>{
+  document.getElementById(id).addEventListener('click', function(e){ if(e.target===this) this.classList.remove('open'); });
+});
+</script>
+
+</body>
+</html>

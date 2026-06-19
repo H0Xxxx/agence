@@ -1,51 +1,34 @@
 <!DOCTYPE html>
 <html lang="fr">
-
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Agence Immobilière Hamdaoui</title>
-
 <link rel="stylesheet" href="style.css">
-
-<!-- Fonts -->
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-
-<!-- Page loader + transitions -->
 <script src="transitions.js"></script>
-
+<script src="data.js"></script>
 </head>
-
 <body>
 
 <header class="hero">
 
 <nav>
-
-<span class="logo-wrap">
-<img src="./logo.png" class="logo">
-</span>
-
-<div class="links">
-<a href="index.html" class="active">Accueil</a>
-<a href="offres.html">Offres</a>
-<a href="appartements.html">Appartements</a>
-<a href="booking.html">Booking</a>
-</div>
-
+  <span class="logo-wrap"><img src="./logo.png" class="logo"></span>
+  <div class="links">
+    <a href="index.html" class="active">Accueil</a>
+    <a href="offres.html">Offres</a>
+    <a href="appartements.html">Appartements</a>
+    <a href="booking.html">Booking</a>
+    <a href="laisser-avis.html">Votre avis</a>
+    <a href="login.html" id="navLoginLink" style="border:1px solid rgba(201,161,90,0.35);padding:7px 16px;border-radius:999px;">Connexion</a>
+  </div>
 </nav>
 
 <div class="hero-content">
-
-<h1>Agence Immobilière Hamdaoui</h1>
-
-<p>
-Trouvez votre bien idéal rapidement et facilement.
-</p>
-
-<a href="booking.html" class="btn">Réserver maintenant</a>
-
+  <h1>Agence Immobilière Hamdaoui</h1>
+  <p>Trouvez votre bien idéal rapidement et facilement.</p>
+  <a href="booking.html" class="btn">Réserver maintenant</a>
 </div>
 
 </header>
@@ -53,101 +36,80 @@ Trouvez votre bien idéal rapidement et facilement.
 <!-- ABOUT -->
 <section id="home" class="section">
 <div class="section-inner">
-
-<h2>À propos</h2>
-
-<p>
-Depuis 1994, nous accompagnons vos projets immobiliers avec confiance et professionnalisme.
-</p>
-
+  <h2>À propos</h2>
+  <p>Depuis 1994, nous accompagnons vos projets immobiliers avec confiance et professionnalisme.</p>
 </div>
 </section>
 
-<!-- REVIEWS -->
+<!-- REVIEWS — chargés dynamiquement depuis localStorage -->
 <section id="reviews" class="section">
 <div class="section-inner">
 
-<h2>Avis clients</h2>
-<p>Ce que disent ceux qui nous ont fait confiance.</p>
+  <h2>Avis clients</h2>
+  <p>Ce que disent ceux qui nous ont fait confiance.</p>
 
-<div class="reviews-grid">
-
-  <div class="review-card">
-    <span class="review-quote">"</span>
-    <p class="review-text">Une agence sérieuse et professionnelle. Ils ont trouvé notre appartement en moins de deux semaines, exactement selon nos critères et notre budget. Je recommande vivement.</p>
-    <div class="review-stars">
-      <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
-      <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
-      <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
-      <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
-      <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
-    </div>
-    <div class="review-author">
-      <div class="review-avatar">KM</div>
-      <div class="review-author-info">
-        <strong>Karim Mansouri</strong>
-        <span>Achat F3 — Souk Ahras</span>
-      </div>
-    </div>
+  <div class="reviews-grid" id="reviewsGrid">
+    <!-- Injecté par JS -->
   </div>
 
-  <div class="review-card">
-    <span class="review-quote">"</span>
-    <p class="review-text">Excellent accompagnement du début à la fin. L'équipe est disponible, honnête et vraiment à l'écoute. Notre villa a été vendue au meilleur prix en un temps record. Bravo.</p>
-    <div class="review-stars">
-      <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
-      <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
-      <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
-      <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
-      <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
-    </div>
-    <div class="review-author">
-      <div class="review-avatar">SB</div>
-      <div class="review-author-info">
-        <strong>Samira Bensalem</strong>
-        <span>Vente villa — Route de Tébessa</span>
-      </div>
-    </div>
+  <div style="text-align:center;margin-top:36px;">
+    <a href="laisser-avis.html" class="btn" style="display:inline-block;">
+      ✍ Laisser votre avis
+    </a>
   </div>
 
-  <div class="review-card">
-    <span class="review-quote">"</span>
-    <p class="review-text">Trente ans de confiance dans la région, ça se voit. Hamdaoui connaît parfaitement le marché local. Je les consulte à chaque projet immobilier depuis plus de dix ans.</p>
-    <div class="review-stars">
-      <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
-      <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
-      <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
-      <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
-      <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
-    </div>
-    <div class="review-author">
-      <div class="review-avatar">RH</div>
-      <div class="review-author-info">
-        <strong>Rachid Hadjadj</strong>
-        <span>Client fidèle depuis 2013</span>
-      </div>
-    </div>
-  </div>
-
-</div>
 </div>
 </section>
 
-<!-- WHATSAPP BUTTON -->
 <a href="https://wa.me/213XXXXXXXXX" class="whatsapp" target="_blank">
-<svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
-<path fill="#06140c" d="M16.004 3C9.376 3 4 8.373 4 15c0 2.39.704 4.613 1.92 6.49L4 29l7.73-1.873A11.93 11.93 0 0 0 16.004 27C22.63 27 28 21.627 28 15S22.63 3 16.004 3Zm6.97 16.97c-.297.836-1.47 1.59-2.03 1.677-.52.08-1.17.114-1.886-.117-.435-.14-.994-.327-1.71-.64-3.01-1.3-4.973-4.33-5.122-4.532-.148-.2-1.216-1.616-1.216-3.08 0-1.465.77-2.183 1.043-2.482.272-.298.594-.373.792-.373.198 0 .396.002.569.01.182.01.426-.07.668.51.248.594.84 2.06.916 2.21.074.15.124.327.025.523-.1.198-.15.322-.297.495-.148.174-.31.39-.445.524-.148.148-.302.31-.13.61.173.297.77 1.27 1.654 2.058 1.137 1.013 2.095 1.327 2.394 1.476.297.148.471.124.643-.074.173-.198.74-.864.94-1.16.198-.298.396-.248.668-.149.272.1 1.738.82 2.034.968.297.149.495.223.569.347.074.124.074.717-.223 1.553Z"/>
-</svg>
-WhatsApp
+  <svg viewBox="0 0 32 32"><path fill="#06140c" d="M16.004 3C9.376 3 4 8.373 4 15c0 2.39.704 4.613 1.92 6.49L4 29l7.73-1.873A11.93 11.93 0 0 0 16.004 27C22.63 27 28 21.627 28 15S22.63 3 16.004 3Zm6.97 16.97c-.297.836-1.47 1.59-2.03 1.677-.52.08-1.17.114-1.886-.117-.435-.14-.994-.327-1.71-.64-3.01-1.3-4.973-4.33-5.122-4.532-.148-.2-1.216-1.616-1.216-3.08 0-1.465.77-2.183 1.043-2.482.272-.298.594-.373.792-.373.198 0 .396.002.569.01.182.01.426-.07.668.51.248.594.84 2.06.916 2.21.074.15.124.327.025.523-.1.198-.15.322-.297.495-.148.174-.31.39-.445.524-.148.148-.302.31-.13.61.173.297.77 1.27 1.654 2.058 1.137 1.013 2.095 1.327 2.394 1.476.297.148.471.124.643-.074.173-.198.74-.864.94-1.16.198-.298.396-.248.668-.149.272.1 1.738.82 2.034.968.297.149.495.223.569.347.074.124.074.717-.223 1.553Z"/></svg>
+  WhatsApp
 </a>
 
-<!-- FOOTER -->
-<footer>
+<footer><p>© Agence Immobilière Hamdaoui Depuis 1994</p></footer>
 
-<p>© Agence Immobilière Hamdaoui Depuis 1994</p>
+<script>
+// Adapter le lien de nav selon la session
+const session = DB.getSession();
+const loginLink = document.getElementById('navLoginLink');
+if (session) {
+  if (session.role === 'admin') {
+    loginLink.textContent = '⚙ Admin';
+    loginLink.href = 'admin.html';
+  } else {
+    loginLink.textContent = session.name.split(' ')[0];
+    loginLink.href = '#';
+  }
+}
 
-</footer>
+// Charger les avis approuvés
+function renderReviews() {
+  const reviews = DB.getApprovedReviews();
+  const grid    = document.getElementById('reviewsGrid');
+
+  if (!reviews.length) {
+    grid.innerHTML = '<p style="color:var(--ivory-faint);text-align:center;grid-column:1/-1;">Aucun avis pour le moment. Soyez le premier !</p>';
+    return;
+  }
+
+  grid.innerHTML = reviews.map(r => `
+    <div class="review-card">
+      <span class="review-quote">"</span>
+      <p class="review-text">${r.text}</p>
+      <div class="review-stars">${DB.starsSVG(r.stars)}</div>
+      <div class="review-author">
+        <div class="review-avatar">${r.initials}</div>
+        <div class="review-author-info">
+          <strong>${r.name}</strong>
+          <span>${r.context}</span>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+renderReviews();
+</script>
 
 </body>
-
 </html>
