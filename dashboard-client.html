@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mon Dashboard — Agence Hamdaoui</title>
+<link rel="stylesheet" href="style.css">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<script src="transitions.js"></script>
+<script src="data.js"></script>
+</head>
+<body>
+
+<nav>
+  <span class="logo-wrap"><img src="./logo.png" class="logo"></span>
+  <div class="links">
+    <a href="index.html">Accueil</a>
+    <a href="appartements.html">Appartements</a>
+    <a href="projets.html">Projets</a>
+    <a href="dashboard-client.html" class="active">Mon dashboard</a>
+    <a href="assistant.html" style="border:1px solid rgba(201,161,90,0.35);padding:7px 16px;border-radius:999px;color:var(--copper-light);">🤖 Assistant IA</a>
+  </div>
+</nav>
+
+<div class="dash-grid">
+
+  <!-- SIDEBAR -->
+  <aside class="dash-sidebar">
+
+    <div class="dash-profile-card">
+      <div class="dash-avatar-big" id="dashAvatar">?</div>
+      <h3 id="dashName">Chargement...</h3>
+      <p id="dashEmail">—</p>
+      <button class="btn-danger" style="width:100%;margin-top:4px;" onclick="DB.clearSession();window.location.href='login.html'">Déconnexion</button>
+    </div>
+
+    <div style="background:linear-gradient(160deg,var(--navy-800),var(--navy-700));border:1px solid var(--line);border-radius:16px;padding:16px;">
+      <nav class="dash-nav">
+        <div class="dash-nav-item active" onclick="showTab('overview',this)">
+          <svg viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
+          Vue d'ensemble
+        </div>
+        <div class="dash-nav-item" onclick="showTab('favorites',this)">
+          <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+          Favoris
+          <span class="dash-nav-badge" id="favBadge">0</span>
+        </div>
+        <div class="dash-nav-item" onclick="showTab('appointments',this)">
+          <svg viewBox="0 0 24 24"><path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z"/></svg>
+          Rendez-vous
+          <span class="dash-nav-badge" id="apptBadge">0</span>
+        </div>
+        <div class="dash-nav-item" onclick="showTab('messages',this)">
+          <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
+          Messages
+          <span class="dash-nav-badge" id="msgBadge">1</span>
+        </div>
+        <div class="dash-nav-item" onclick="showTab('documents',this)">
+          <svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+          Documents
+        </div>
+        <div class="dash-nav-item" onclick="showTab('recommendations',this)">
+          <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+          Recommandations
+        </div>
+        <div class="dash-nav-item" onclick="showTab('my-properties',this)">
+          <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+          Mes biens
+        </div>
+      </nav>
+    </div>
+
+    <div style="margin-top:14px;background:linear-gradient(160deg,var(--navy-800),var(--navy-700));border:1px solid var(--line);border-radius:16px;padding:18px;">
+      <p style="font-size:12px;color:var(--ivory-faint);margin:0 0 12px;font-weight:300;">Accès rapide</p>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <a href="assistant.html" class="sidebar-btn" style="font-size:13px;">🤖 Assistant IA</a>
+        <a href="visite-virtuelle.html" class="sidebar-btn-secondary" style="text-align:center;display:block;padding:10px;">🏠 Visite 360°</a>
+        <a href="projets.html" class="sidebar-btn-secondary" style="text-align:center;display:block;padding:10px;">🏗 Nouveaux projets</a>
+      </div>
+    </div>
+
+  </aside>
+
+  <!-- MAIN -->
+  <main class="dash-main">
+
+    <!-- ===== OVERVIEW ===== -->
+    <div class="dash-panel active" id="tab-overview">
+      <h2 class="dash-panel-title">Vue d'ensemble</h2>
+      <div class="dash-stats" id="overviewStats"></div>
+
+      <!-- Recent activity -->
+      <h3 style="font-size:15px;color:var(--ivory);margin-bottom:14px;">Activité récente</h3>
+      <div id="recentActivity"></div>
+
+      <!-- Quick actions -->
+      <h3 style="font-size:15px;color:var(--ivory);margin:20px 0 14px;">Actions rapides</h3>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;">
+        <a href="appartements.html" class="btn" style="display:inline-block;font-size:13.5px;padding:12px 22px;">Chercher un bien</a>
+        <a href="booking.html" class="btn" style="display:inline-block;font-size:13.5px;padding:12px 22px;background:transparent;border:1px solid var(--line);color:var(--ivory-dim);">Prendre RDV</a>
+        <a href="assistant.html" class="btn" style="display:inline-block;font-size:13.5px;padding:12px 22px;background:transparent;border:1px solid rgba(201,161,90,0.3);color:var(--copper-light);">🤖 Consulter l'IA</a>
+      </div>
+    </div>
+
+    <!-- ===== FAVORITES ===== -->
+    <div class="dash-panel" id="tab-favorites">
+      <h2 class="dash-panel-title">Mes biens favoris</h2>
+      <div id="favoritesContainer"></div>
+      <div style="text-align:center;margin-top:24px;">
+        <a href="appartements.html" class="btn" style="display:inline-block;">+ Ajouter des favoris</a>
+      </div>
+    </div>
+
+    <!-- ===== APPOINTMENTS ===== -->
+    <div class="dash-panel" id="tab-appointments">
+      <h2 class="dash-panel-title">Mes rendez-vous</h2>
+      <div id="appointmentsContainer"></div>
+      <div style="text-align:center;margin-top:20px;">
+        <a href="booking.html" class="btn" style="display:inline-block;">+ Prendre un rendez-vous</a>
+      </div>
+    </div>
+
+    <!-- ===== MESSAGES ===== -->
+    <div class="dash-panel" id="tab-messages">
+      <h2 class="dash-panel-title">Messages</h2>
+      <div id="messagesContainer"></div>
+    </div>
+
+    <!-- ===== DOCUMENTS ===== -->
+    <div class="dash-panel" id="tab-documents">
+      <h2 class="dash-panel-title">Mes documents</h2>
+      <div id="documentsContainer"></div>
+    </div>
+
+    <!-- ===== RECOMMENDATIONS ===== -->
+    <div class="dash-panel" id="tab-recommendations">
+      <h2 class="dash-panel-title">Recommandations personnalisées</h2>
+      <p style="color:var(--ivory-faint);font-size:13.5px;font-weight:300;margin-bottom:20px;">
+        Basées sur vos favoris et votre historique de recherche.
+      </p>
+      <div id="recoContainer"></div>
+    </div>
+
+    <!-- ===== MY PROPERTIES ===== -->
+    <div class="dash-panel" id="tab-my-properties">
+      <h2 class="dash-panel-title">Mes biens confiés à l'agence</h2>
+      <div id="myPropertiesContainer"></div>
+    </div>
+
+  </main>
+
+</div>
+
+<a href="https://wa.me/213XXXXXXXXX" class="whatsapp" target="_blank">
+  <svg viewBox="0 0 32 32"><path fill="#06140c" d="M16.004 3C9.376 3 4 8.373 4 15c0 2.39.704 4.613 1.92 6.49L4 29l7.73-1.873A11.93 11.93 0 0 0 16.004 27C22.63 27 28 21.627 28 15S22.63 3 16.004 3Zm6.97 16.97c-.297.836-1.47 1.59-2.03 1.677-.52.08-1.17.114-1.886-.117-.435-.14-.994-.327-1.71-.64-3.01-1.3-4.973-4.33-5.122-4.532-.148-.2-1.216-1.616-1.216-3.08 0-1.465.77-2.183 1.043-2.482.272-.298.594-.373.792-.373.198 0 .396.002.569.01.182.01.426-.07.668.51.248.594.84 2.06.916 2.21.074.15.124.327.025.523-.1.198-.15.322-.297.495-.148.174-.31.39-.445.524-.148.148-.302.31-.13.61.173.297.77 1.27 1.654 2.058 1.137 1.013 2.095 1.327 2.394 1.476.297.148.471.124.643-.074.173-.198.74-.864.94-1.16.198-.298.396-.248.668-.149.272.1 1.738.82 2.034.968.297.149.495.223.569.347.074.124.074.717-.223 1.553Z"/></svg>
+  WhatsApp
+</a>
+
+<script>
+// ---- Auth ----
+const session = DB.requireAuth();
+if (session.role === 'admin') window.location.href = 'admin.html';
+
+const initials = session.name.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
+document.getElementById('dashAvatar').textContent = initials;
+document.getElementById('dashName').textContent   = session.name;
+document.getElementById('dashEmail').textContent  = session.email;
+
+// ---- Data helpers ----
+function getFavorites() { return JSON.parse(localStorage.getItem(`hm_favs_${session.id}`) || '[]'); }
+function saveFavorites(favs) { localStorage.setItem(`hm_favs_${session.id}`, JSON.stringify(favs)); }
+function removeFavorite(propId) {
+  saveFavorites(getFavorites().filter(f => f.id !== propId));
+  renderFavorites(); updateBadges();
+}
+
+function getMessages() {
+  return JSON.parse(localStorage.getItem(`hm_msgs_${session.id}`) || '[]').concat([
+    { id: 1, from: "Agence Hamdaoui", text: "Bonjour ! Suite à votre réservation, nous confirmons votre rendez-vous pour le F3 Moderne le 15 juin à 10h. À bientôt !", date: "2024-06-10", read: false }
+  ]);
+}
+
+function getClientBookings() {
+  return DB.getBookings().filter(b => b.name === session.name || true).slice(0, 3);
+}
+
+function getClientDocs() {
+  return DB.getClientProperties(session.id)
+    .filter(p => p.receiptUrl)
+    .map(p => ({ name: `Reçu — ${p.title}`, type: 'PDF', date: p.statusDate, url: p.receiptUrl }));
+}
+
+// ---- Navigation ----
+function showTab(name, el) {
+  document.querySelectorAll('.dash-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.dash-nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  if (el) el.classList.add('active');
+  renders[name]?.();
+}
+
+const renders = {
+  overview:        renderOverview,
+  favorites:       renderFavorites,
+  appointments:    renderAppointments,
+  messages:        renderMessages,
+  documents:       renderDocuments,
+  recommendations: renderRecommendations,
+  'my-properties': renderMyProperties
+};
+
+// ---- Overview ----
+function renderOverview() {
+  const favs    = getFavorites();
+  const bookings= getClientBookings();
+  const props   = DB.getClientProperties(session.id);
+  const msgs    = getMessages().filter(m=>!m.read);
+
+  document.getElementById('overviewStats').innerHTML = `
+    <div class="dash-stat"><strong>${favs.length}</strong><span>Favoris</span></div>
+    <div class="dash-stat"><strong>${bookings.length}</strong><span>Rendez-vous</span></div>
+    <div class="dash-stat"><strong>${props.length}</strong><span>Biens confiés</span></div>
+    <div class="dash-stat"><strong>${msgs.length}</strong><span>Messages non lus</span></div>
+  `;
+
+  const activities = [
+    { icon:"🏠", text:"Nouveau bien ajouté : F4 Résidence El Wouroud", date:"Il y a 2 jours" },
+    { icon:"📅", text:"Votre visite du F3 Moderne confirmée pour le 15 juin", date:"Il y a 3 jours" },
+    { icon:"💬", text:"Message de l'agence reçu", date:"Il y a 5 jours" },
+    { icon:"⭐", text:"Vous avez ajouté Villa Luxe à vos favoris", date:"Il y a 1 semaine" }
+  ];
+
+  document.getElementById('recentActivity').innerHTML = activities.map(a => `
+    <div style="display:flex;align-items:center;gap:14px;padding:13px 0;border-bottom:1px solid var(--line);">
+      <span style="font-size:20px;">${a.icon}</span>
+      <div style="flex:1;">
+        <p style="font-size:13.5px;color:var(--ivory-dim);margin:0 0 2px;">${a.text}</p>
+        <span style="font-size:11.5px;color:var(--ivory-faint);">${a.date}</span>
+      </div>
+    </div>`).join('');
+}
+
+// ---- Favorites ----
+function renderFavorites() {
+  const favs = getFavorites();
+  const PIN = `<svg style="width:12px;height:12px;fill:var(--copper);flex-shrink:0;" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>`;
+  const container = document.getElementById('favoritesContainer');
+
+  if (!favs.length) {
+    container.innerHTML = '<p style="color:var(--ivory-faint);font-size:14px;text-align:center;padding:40px 0;">Aucun favori pour le moment.<br>Explorez nos biens et ajoutez-en !</p>';
+    return;
+  }
+
+  container.innerHTML = favs.map(p => `
+    <div class="fav-card">
+      <img class="fav-thumb" src="${p.image||'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=200&q=70'}" alt="${p.title}">
+      <div class="fav-info">
+        <h4>${p.title}</h4>
+        <p style="display:flex;align-items:center;gap:4px;">${PIN} ${p.location}</p>
+        <span class="fav-price">${p.price} DA</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <a href="${p.detailPage||'appartements.html'}" class="pdf-download-btn" style="font-size:12px;">Voir →</a>
+        <button class="fav-remove" onclick="removeFavorite(${p.id})">♡ Retirer</button>
+      </div>
+    </div>`).join('');
+}
+
+// ---- Appointments ----
+function renderAppointments() {
+  const bookings = getClientBookings();
+  const container = document.getElementById('appointmentsContainer');
+
+  if (!bookings.length) {
+    container.innerHTML = '<p style="color:var(--ivory-faint);font-size:14px;text-align:center;padding:40px 0;">Aucun rendez-vous planifié.</p>';
+    return;
+  }
+
+  container.innerHTML = bookings.map(b => {
+    const d = new Date(b.date);
+    const day = d.getDate();
+    const month = d.toLocaleDateString('fr-FR',{month:'short'});
+    return `<div class="appt-item">
+      <div class="appt-date">
+        <strong>${day}</strong>
+        <span>${month}</span>
+      </div>
+      <div class="appt-info">
+        <h4>${b.service}</h4>
+        <p>à ${b.time} — ${b.name}</p>
+      </div>
+      <span class="status-badge ${b.status==='confirmed'?'status-approved':'status-pending'}">${b.status==='confirmed'?'Confirmé':'En attente'}</span>
+    </div>`;
+  }).join('');
+}
+
+// ---- Messages ----
+function renderMessages() {
+  const msgs = getMessages();
+  document.getElementById('messagesContainer').innerHTML = msgs.map(m => `
+    <div class="msg-thread">
+      <div class="msg-thread-header">
+        <div class="dot" style="${m.read?'background:var(--ivory-faint);':''};"></div>
+        <h4>${m.from}</h4>
+        <span>${m.date}</span>
+      </div>
+      <div class="msg-thread-body">
+        <p>${m.text}</p>
+        <div class="msg-reply">
+          <input type="text" placeholder="Répondre à l'agence..." id="reply_${m.id}">
+          <button onclick="sendReply(${m.id})">Envoyer</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function sendReply(id) {
+  const input = document.getElementById(`reply_${id}`);
+  if (!input.value.trim()) return;
+  const saved = JSON.parse(localStorage.getItem(`hm_msgs_${session.id}`) || '[]');
+  saved.push({ id: Date.now(), from: session.name, text: input.value.trim(), date: new Date().toISOString().slice(0,10), read: true });
+  localStorage.setItem(`hm_msgs_${session.id}`, JSON.stringify(saved));
+  input.value = '';
+  alert('Message envoyé à l\'agence !');
+}
+
+// ---- Documents ----
+function renderDocuments() {
+  const docs = getClientDocs();
+  const defaultDocs = [
+    { name: "Conditions Générales de l'Agence", type: "PDF", date: "2024-01-01", url: "#" },
+    { name: "Guide du propriétaire", type: "PDF", date: "2024-01-01", url: "#" }
+  ];
+  const allDocs = [...defaultDocs, ...docs];
+
+  const DOCICON = `<svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>`;
+
+  document.getElementById('documentsContainer').innerHTML = allDocs.map(d => `
+    <div class="doc-item">
+      <div class="doc-icon">${DOCICON}</div>
+      <div class="doc-info">
+        <h4>${d.name}</h4>
+        <span>${d.type} · Ajouté le ${d.date}</span>
+      </div>
+      <a href="${d.url}" target="_blank" class="pdf-download-btn">
+        <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+        Télécharger
+      </a>
+    </div>`).join('');
+}
+
+// ---- Recommendations ----
+function renderRecommendations() {
+  const props = DB.getProperties().filter(p=>p.available).slice(0,3);
+  const PIN = `<svg style="width:12px;height:12px;fill:var(--copper);" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>`;
+  const match = ["95% correspondance","88% correspondance","82% correspondance"];
+
+  document.getElementById('recoContainer').innerHTML = props.map((p,i) => `
+    <div class="reco-card">
+      <img class="reco-thumb" src="${p.image||'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=200&q=70'}" alt="${p.title}">
+      <div class="reco-body">
+        <h4>${p.title}</h4>
+        <p style="display:flex;align-items:center;gap:4px;">${PIN} ${p.location}</p>
+        <p style="color:var(--copper-light);font-weight:600;font-size:14px;">${p.price} DA</p>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:8px;">
+          <span class="reco-match">${match[i]}</span>
+          <div style="display:flex;gap:8px;">
+            <button onclick="addToFavorites(${JSON.stringify(p).replace(/"/g,"&quot;")})" style="font-size:12px;padding:6px 12px;background:transparent;border:1px solid var(--line);border-radius:8px;color:var(--ivory-dim);cursor:pointer;">♡ Favori</button>
+            <a href="${p.detailPage||'appartements.html'}" class="pdf-download-btn" style="font-size:12px;">Voir →</a>
+          </div>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function addToFavorites(prop) {
+  const favs = getFavorites();
+  if (favs.find(f=>f.id===prop.id)) { alert('Déjà dans vos favoris !'); return; }
+  favs.push(prop);
+  saveFavorites(favs);
+  updateBadges();
+  alert(`"${prop.title}" ajouté aux favoris !`);
+}
+
+// ---- My Properties ----
+function renderMyProperties() {
+  const props = DB.getClientProperties(session.id);
+  const container = document.getElementById('myPropertiesContainer');
+
+  if (!props.length) {
+    container.innerHTML = '<p style="color:var(--ivory-faint);font-size:14px;text-align:center;padding:40px 0;">Aucun bien confié à l\'agence pour le moment.<br><a href="https://wa.me/213XXXXXXXXX" style="color:var(--copper-light);">Contactez-nous pour commencer</a></p>';
+    return;
+  }
+
+  const STEPS = ["nouveau","en_recherche","visites","negociation","loue"];
+  container.innerHTML = props.map(p => {
+    const idx = STEPS.indexOf(p.status);
+    const stepsHtml = STEPS.map((s,i) => `
+      <div class="dossier-step ${i<idx?'done':i===idx?'current':''}">
+        <div class="step-dot">${i<idx?'✓':i+1}</div>
+        <div class="step-label">${DB.statusLabel(s)}</div>
+      </div>`).join('');
+
+    return `<div class="client-property-card" style="margin-bottom:16px;">
+      <div class="client-property-header">
+        <div class="client-property-title">
+          <h3>${p.title}</h3>
+          <span>${p.location} · ${p.transaction||''}</span>
+        </div>
+        <span class="status-badge ${p.status==='loue'||p.status==='vendu'?'status-approved':'status-pending'}">${DB.statusLabel(p.status)}</span>
+      </div>
+      <div class="dossier-steps">${stepsHtml}</div>
+      <div class="client-property-details">
+        <div class="client-detail-item"><label>Prix estimé</label><strong>${p.estimatedPrice||'—'} DA</strong></div>
+        ${p.status==='loue'||p.status==='vendu'?`
+        <div class="client-detail-item highlight"><label>À récupérer</label><strong>${p.recoveryAmount||'—'} DA</strong></div>
+        <div class="client-detail-item"><label>Date récup.</label><strong>${p.recoveryDate||'À confirmer'}</strong></div>
+        ${p.receiptUrl?`<div class="client-detail-item"><label>Reçu PDF</label><strong><a href="${p.receiptUrl}" target="_blank" class="pdf-download-btn" style="font-size:12px;">Télécharger</a></strong></div>`:''}
+        `:''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ---- Update badges ----
+function updateBadges() {
+  document.getElementById('favBadge').textContent  = getFavorites().length;
+  document.getElementById('apptBadge').textContent = getClientBookings().length;
+  document.getElementById('msgBadge').textContent  = getMessages().filter(m=>!m.read).length;
+}
+
+// ---- Init ----
+renderOverview();
+updateBadges();
+</script>
+
+</body>
+</html>

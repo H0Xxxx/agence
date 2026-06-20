@@ -17,10 +17,12 @@
   <span class="logo-wrap"><img src="./logo.png" class="logo"></span>
   <div class="links">
     <a href="index.html" class="active">Accueil</a>
-    <a href="offres.html">Offres</a>
     <a href="appartements.html">Appartements</a>
+    <a href="projets.html">Projets</a>
+    <a href="offres.html">Offres</a>
     <a href="booking.html">Booking</a>
     <a href="laisser-avis.html">Votre avis</a>
+    <a href="assistant.html" style="color:var(--copper-light);border:1px solid rgba(201,161,90,0.35);padding:7px 16px;border-radius:999px;">🤖 Assistant IA</a>
     <a href="login.html" id="navLoginLink" style="border:1px solid rgba(201,161,90,0.35);padding:7px 16px;border-radius:999px;">Connexion</a>
   </div>
 </nav>
@@ -28,36 +30,55 @@
 <div class="hero-content">
   <h1>Agence Immobilière Hamdaoui</h1>
   <p>Trouvez votre bien idéal rapidement et facilement.</p>
-  <a href="booking.html" class="btn">Réserver maintenant</a>
+  <div style="display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-top:8px;">
+    <a href="booking.html" class="btn">Réserver maintenant</a>
+    <a href="visite-virtuelle.html" class="btn" style="background:transparent;border:2px solid rgba(201,161,90,0.5);color:var(--ivory);box-shadow:none;">🏠 Visite virtuelle 360°</a>
+  </div>
 </div>
 
 </header>
 
 <!-- ABOUT -->
-<section id="home" class="section">
+<section id="home" class="section" style="background:var(--navy-900);">
 <div class="section-inner">
   <h2>À propos</h2>
   <p>Depuis 1994, nous accompagnons vos projets immobiliers avec confiance et professionnalisme.</p>
+
+  <!-- Quick access cards -->
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-top:36px;text-align:left;">
+    <a href="appartements.html" style="text-decoration:none;display:flex;flex-direction:column;gap:8px;padding:20px;background:linear-gradient(160deg,var(--navy-800),var(--navy-700));border:1px solid var(--line);border-radius:16px;transition:transform 0.25s,border-color 0.25s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(201,161,90,0.35)'" onmouseout="this.style.transform='';this.style.borderColor='var(--line)'">
+      <span style="font-size:24px;">🏢</span>
+      <span style="font-size:14px;font-weight:600;color:var(--ivory);">Appartements</span>
+      <span style="font-size:12.5px;color:var(--ivory-faint);font-weight:300;">Biens disponibles</span>
+    </a>
+    <a href="projets.html" style="text-decoration:none;display:flex;flex-direction:column;gap:8px;padding:20px;background:linear-gradient(160deg,var(--navy-800),var(--navy-700));border:1px solid var(--line);border-radius:16px;transition:transform 0.25s,border-color 0.25s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(201,161,90,0.35)'" onmouseout="this.style.transform='';this.style.borderColor='var(--line)'">
+      <span style="font-size:24px;">🏗</span>
+      <span style="font-size:14px;font-weight:600;color:var(--ivory);">Nouveaux Projets</span>
+      <span style="font-size:12.5px;color:var(--ivory-faint);font-weight:300;">Sur plans & en cours</span>
+    </a>
+    <a href="visite-virtuelle.html" style="text-decoration:none;display:flex;flex-direction:column;gap:8px;padding:20px;background:linear-gradient(160deg,var(--navy-800),var(--navy-700));border:1px solid var(--line);border-radius:16px;transition:transform 0.25s,border-color 0.25s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(201,161,90,0.35)'" onmouseout="this.style.transform='';this.style.borderColor='var(--line)'">
+      <span style="font-size:24px;">🎯</span>
+      <span style="font-size:14px;font-weight:600;color:var(--ivory);">Visite 360°</span>
+      <span style="font-size:12.5px;color:var(--ivory-faint);font-weight:300;">Visitez sans bouger</span>
+    </a>
+    <a href="assistant.html" style="text-decoration:none;display:flex;flex-direction:column;gap:8px;padding:20px;background:linear-gradient(160deg,var(--navy-800),var(--navy-700));border:1px solid rgba(201,161,90,0.25);border-radius:16px;transition:transform 0.25s,border-color 0.25s;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(201,161,90,0.5)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(201,161,90,0.25)'">
+      <span style="font-size:24px;">🤖</span>
+      <span style="font-size:14px;font-weight:600;color:var(--copper-light);">Assistant IA</span>
+      <span style="font-size:12.5px;color:var(--ivory-faint);font-weight:300;">Conseils personnalisés</span>
+    </a>
+  </div>
 </div>
 </section>
 
-<!-- REVIEWS — chargés dynamiquement depuis localStorage -->
-<section id="reviews" class="section">
+<!-- REVIEWS -->
+<section id="reviews" class="section" style="background:var(--navy-900);">
 <div class="section-inner">
-
   <h2>Avis clients</h2>
   <p>Ce que disent ceux qui nous ont fait confiance.</p>
-
-  <div class="reviews-grid" id="reviewsGrid">
-    <!-- Injecté par JS -->
-  </div>
-
+  <div class="reviews-grid" id="reviewsGrid"></div>
   <div style="text-align:center;margin-top:36px;">
-    <a href="laisser-avis.html" class="btn" style="display:inline-block;">
-      ✍ Laisser votre avis
-    </a>
+    <a href="laisser-avis.html" class="btn" style="display:inline-block;">✍ Laisser votre avis</a>
   </div>
-
 </div>
 </section>
 
@@ -66,32 +87,33 @@
   WhatsApp
 </a>
 
-<footer><p>© Agence Immobilière Hamdaoui Depuis 1994</p></footer>
+<footer>
+  <div style="max-width:900px;margin:0 auto;display:flex;justify-content:space-between;flex-wrap:wrap;gap:16px;align-items:center;">
+    <p style="margin:0;">© Agence Immobilière Hamdaoui Depuis 1994</p>
+    <div style="display:flex;gap:16px;flex-wrap:wrap;">
+      <a href="assistant.html" style="color:var(--copper-light);text-decoration:none;font-size:13px;">🤖 Assistant IA</a>
+      <a href="visite-virtuelle.html" style="color:var(--ivory-faint);text-decoration:none;font-size:13px;">Visite 360°</a>
+      <a href="projets.html" style="color:var(--ivory-faint);text-decoration:none;font-size:13px;">Projets</a>
+      <a href="laisser-avis.html" style="color:var(--ivory-faint);text-decoration:none;font-size:13px;">Votre avis</a>
+    </div>
+  </div>
+</footer>
 
 <script>
-// Adapter le lien de nav selon la session
 const session = DB.getSession();
 const loginLink = document.getElementById('navLoginLink');
 if (session) {
-  if (session.role === 'admin') {
-    loginLink.textContent = '⚙ Admin';
-    loginLink.href = 'admin.html';
-  } else {
-    loginLink.textContent = session.name.split(' ')[0];
-    loginLink.href = '#';
-  }
+  loginLink.textContent = session.role==='admin' ? '⚙ Admin' : '👤 ' + session.name.split(' ')[0];
+  loginLink.href = session.role==='admin' ? 'admin.html' : 'dashboard-client.html';
 }
 
-// Charger les avis approuvés
 function renderReviews() {
   const reviews = DB.getApprovedReviews();
-  const grid    = document.getElementById('reviewsGrid');
-
+  const grid = document.getElementById('reviewsGrid');
   if (!reviews.length) {
-    grid.innerHTML = '<p style="color:var(--ivory-faint);text-align:center;grid-column:1/-1;">Aucun avis pour le moment. Soyez le premier !</p>';
+    grid.innerHTML = '<p style="color:var(--ivory-faint);text-align:center;grid-column:1/-1;">Aucun avis pour le moment.</p>';
     return;
   }
-
   grid.innerHTML = reviews.map(r => `
     <div class="review-card">
       <span class="review-quote">"</span>
@@ -104,10 +126,8 @@ function renderReviews() {
           <span>${r.context}</span>
         </div>
       </div>
-    </div>
-  `).join('');
+    </div>`).join('');
 }
-
 renderReviews();
 </script>
 

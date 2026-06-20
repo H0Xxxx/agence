@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Visite Virtuelle 360° — Agence Hamdaoui</title>
+<link rel="stylesheet" href="style.css">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<script src="transitions.js"></script>
+<style>
+/* Couleurs de pièces simulées */
+.room-sejour   { background: linear-gradient(135deg, #1a2540 0%, #0f1829 50%, #1e2d4a 100%); }
+.room-cuisine  { background: linear-gradient(135deg, #1a2518 0%, #0f1e12 50%, #223025 100%); }
+.room-chambre  { background: linear-gradient(135deg, #25181a 0%, #1e0f12 50%, #301e20 100%); }
+.room-sdb      { background: linear-gradient(135deg, #151a25 0%, #0f1419 50%, #1e2530 100%); }
+.room-terrasse { background: linear-gradient(135deg, #201a10 0%, #181208 50%, #2a2214 100%); }
+</style>
+</head>
+<body>
+
+<nav style="position:absolute;top:0;left:0;right:0;z-index:50;background:rgba(6,10,20,0.85);backdrop-filter:blur(8px);">
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 28px;">
+    <a href="index.html" style="display:flex;align-items:center;gap:8px;color:var(--ivory-dim);text-decoration:none;font-size:13.5px;">
+      <svg style="width:16px;height:16px;fill:currentColor;" viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+      Retour
+    </a>
+    <span style="font-family:'Playfair Display',serif;font-size:15px;color:var(--ivory);">Visite Virtuelle 360°</span>
+    <a href="booking.html" style="padding:8px 18px;background:linear-gradient(135deg,var(--copper-light),var(--copper-dark));border-radius:10px;color:var(--navy-950);font-size:13px;font-weight:600;text-decoration:none;">Réserver une visite</a>
+  </div>
+</nav>
+
+<!-- Panorama -->
+<div class="tour-wrapper" id="tourWrapper">
+
+  <!-- Canvas panoramique simulé -->
+  <canvas id="tourCanvas" style="position:absolute;inset:0;width:100%;height:100%;"></canvas>
+
+  <!-- Overlay dégradé -->
+  <div class="tour-overlay"></div>
+
+  <!-- Hotspots (positionnés en %) -->
+  <div class="tour-hotspot" id="hotspot1" style="left:22%;top:55%;" onclick="changeRoom('cuisine')">
+    <div class="hotspot-dot">
+      <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+    </div>
+    <div class="hotspot-label">Vers la cuisine</div>
+  </div>
+
+  <div class="tour-hotspot" id="hotspot2" style="left:78%;top:55%;" onclick="changeRoom('chambre')">
+    <div class="hotspot-dot">
+      <svg viewBox="0 0 24 24"><path d="M7 13c1.66 0 3-1.34 3-3S8.66 7 7 7s-3 1.34-3 3 1.34 3 3 3zm12-6h-8v7H3V5H1v15h2v-3h18v3h2v-9c0-2.21-1.79-4-4-4z"/></svg>
+    </div>
+    <div class="hotspot-label">Vers la chambre</div>
+  </div>
+
+  <div class="tour-hotspot" id="hotspot3" style="left:50%;top:72%;" onclick="changeRoom('sejour')">
+    <div class="hotspot-dot" style="background:rgba(100,180,255,0.9);">
+      <svg viewBox="0 0 24 24"><path d="M7 13c1.66 0 3-1.34 3-3S8.66 7 7 7s-3 1.34-3 3 1.34 3 3 3zm12-6h-8v7H3V5H1v15h2v-3h18v3h2v-9c0-2.21-1.79-4-4-4z"/></svg>
+    </div>
+    <div class="hotspot-label">Vers le séjour</div>
+  </div>
+
+  <!-- Room selector -->
+  <div class="tour-rooms">
+    <button class="room-btn active" onclick="changeRoom('sejour',this)">🛋 Séjour</button>
+    <button class="room-btn" onclick="changeRoom('cuisine',this)">🍳 Cuisine</button>
+    <button class="room-btn" onclick="changeRoom('chambre',this)">🛏 Chambre</button>
+    <button class="room-btn" onclick="changeRoom('sdb',this)">🚿 Salle de bain</button>
+    <button class="room-btn" onclick="changeRoom('terrasse',this)">🌿 Terrasse</button>
+  </div>
+
+  <!-- Hint -->
+  <div class="tour-hint">🖱 Cliquez et glissez pour regarder autour</div>
+
+  <!-- Info Panel -->
+  <div class="tour-info-panel">
+    <h3 id="roomName">Séjour</h3>
+    <p id="roomDesc">Grand séjour lumineux de 28 m² avec parquet chêne et baie vitrée donnant sur le balcon.</p>
+    <a href="booking.html">📅 Réserver une visite réelle</a>
+  </div>
+
+  <!-- Fullscreen & compass -->
+  <div style="position:absolute;top:80px;right:24px;display:flex;flex-direction:column;gap:8px;z-index:20;">
+    <button onclick="toggleFS()" style="width:40px;height:40px;background:rgba(6,10,20,0.8);border:1px solid var(--line);border-radius:10px;color:var(--ivory-dim);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;" title="Plein écran">⛶</button>
+  </div>
+
+  <!-- Compass -->
+  <div id="compass" style="position:absolute;bottom:80px;right:28px;z-index:20;width:52px;height:52px;">
+    <canvas id="compassCanvas" width="52" height="52"></canvas>
+  </div>
+
+</div>
+
+<script>
+// ============================================================
+// ROOMS DATA
+// ============================================================
+const ROOMS = {
+  sejour: {
+    name: "Séjour",
+    desc: "Grand séjour lumineux de 28 m² avec parquet chêne et baie vitrée donnant sur le balcon.",
+    color1: "#1e2d4a", color2: "#0f1829", color3: "#253560",
+    furniture: [
+      { x: 0.3, y: 0.65, w: 0.2, h: 0.12, color: "#3d2b1a", label: "Canapé" },
+      { x: 0.55, y: 0.55, w: 0.1, h: 0.08, color: "#2a1f14", label: "Table basse" },
+      { x: 0.7, y: 0.4, w: 0.08, h: 0.2, color: "#1a1510", label: "TV" },
+      { x: 0.15, y: 0.3, w: 0.06, h: 0.3, color: "#0a1428", label: "Fenêtre" }
+    ],
+    windows: [{x:0.12, y:0.2, w:0.07, h:0.35}],
+    hotspots: [
+      { pct: 0.22, room: "cuisine", label: "Cuisine →" },
+      { pct: 0.78, room: "chambre", label: "Chambre →" }
+    ]
+  },
+  cuisine: {
+    name: "Cuisine",
+    desc: "Cuisine moderne entièrement équipée avec îlot central, électroménager intégré et rangements optimisés.",
+    color1: "#1a2518", color2: "#0f1e12", color3: "#253020",
+    furniture: [
+      { x: 0.1, y: 0.5, w: 0.3, h: 0.1, color: "#2a3020", label: "Plan de travail" },
+      { x: 0.4, y: 0.5, w: 0.15, h: 0.08, color: "#1a2018", label: "Îlot" },
+      { x: 0.15, y: 0.3, w: 0.05, h: 0.15, color: "#101810", label: "Réfrigérateur" }
+    ],
+    windows: [{x:0.65, y:0.18, w:0.08, h:0.28}],
+    hotspots: [
+      { pct: 0.25, room: "sejour", label: "← Séjour" },
+      { pct: 0.75, room: "sdb", label: "SdB →" }
+    ]
+  },
+  chambre: {
+    name: "Chambre principale",
+    desc: "Suite parentale de 18 m² avec dressing intégré, sol en parquet flottant et lumière naturelle abondante.",
+    color1: "#25181a", color2: "#1e0f12", color3: "#302025",
+    furniture: [
+      { x: 0.25, y: 0.55, w: 0.18, h: 0.1, color: "#3a2020", label: "Lit double" },
+      { x: 0.55, y: 0.5, w: 0.06, h: 0.12, color: "#2a1818", label: "Table de nuit" },
+      { x: 0.7, y: 0.35, w: 0.1, h: 0.25, color: "#1a1010", label: "Armoire" }
+    ],
+    windows: [{x:0.1, y:0.2, w:0.06, h:0.3}],
+    hotspots: [
+      { pct: 0.2, room: "sejour", label: "← Séjour" },
+      { pct: 0.8, room: "terrasse", label: "Terrasse →" }
+    ]
+  },
+  sdb: {
+    name: "Salle de bain",
+    desc: "Salle de bain moderne avec douche à l'italienne, baignoire, double vasque et carrelage marbre.",
+    color1: "#151a25", color2: "#0f1419", color3: "#1e2530",
+    furniture: [
+      { x: 0.15, y: 0.55, w: 0.12, h: 0.08, color: "#202a35", label: "Baignoire" },
+      { x: 0.45, y: 0.5, w: 0.1, h: 0.06, color: "#1a2028", label: "Vasque" },
+      { x: 0.7, y: 0.4, w: 0.08, h: 0.2, color: "#101820", label: "Douche" }
+    ],
+    windows: [{x:0.55, y:0.15, w:0.05, h:0.2}],
+    hotspots: [
+      { pct: 0.3, room: "cuisine", label: "← Cuisine" }
+    ]
+  },
+  terrasse: {
+    name: "Terrasse",
+    desc: "Terrasse de 12 m² orientée plein sud avec vue dégagée sur la ville. Idéale pour profiter des soirées.",
+    color1: "#201a10", color2: "#181208", color3: "#2a2214",
+    furniture: [
+      { x: 0.3, y: 0.6, w: 0.1, h: 0.06, color: "#3a3020", label: "Table" },
+      { x: 0.45, y: 0.58, w: 0.06, h: 0.08, color: "#302818", label: "Chaises" }
+    ],
+    windows: [],
+    hotspots: [
+      { pct: 0.5, room: "chambre", label: "← Chambre" }
+    ]
+  }
+};
+
+// ============================================================
+// PANORAMA ENGINE
+// ============================================================
+let currentRoom = "sejour";
+let rotation    = 0;        // 0..1 (full circle)
+let targetRot   = 0;
+let isDragging  = false;
+let dragStartX  = 0;
+let dragStartRot= 0;
+let animFrameId;
+
+const canvas    = document.getElementById("tourCanvas");
+const ctx       = canvas.getContext("2d");
+const cmpCanvas = document.getElementById("compassCanvas");
+const cmpCtx    = cmpCanvas.getContext("2d");
+
+function resize() {
+  canvas.width  = canvas.offsetWidth;
+  canvas.height = canvas.offsetHeight;
+}
+resize();
+window.addEventListener("resize", () => { resize(); draw(); });
+
+function lerp(a, b, t) { return a + (b - a) * t; }
+
+function draw() {
+  const W = canvas.width;
+  const H = canvas.height;
+  const room = ROOMS[currentRoom];
+
+  ctx.clearRect(0, 0, W, H);
+
+  // ---- Sky / Floor gradient ----
+  const skyGrad = ctx.createLinearGradient(0, 0, 0, H * 0.55);
+  skyGrad.addColorStop(0, room.color2);
+  skyGrad.addColorStop(1, room.color1);
+  ctx.fillStyle = skyGrad;
+  ctx.fillRect(0, 0, W, H * 0.55);
+
+  const floorGrad = ctx.createLinearGradient(0, H * 0.55, 0, H);
+  floorGrad.addColorStop(0, room.color3);
+  floorGrad.addColorStop(1, room.color2);
+  ctx.fillStyle = floorGrad;
+  ctx.fillRect(0, H * 0.55, W, H * 0.45);
+
+  // ---- Perspective grid ----
+  ctx.strokeStyle = "rgba(255,255,255,0.04)";
+  ctx.lineWidth = 1;
+  const horizon = H * 0.52;
+  for (let i = -8; i <= 8; i++) {
+    const x = (W / 2) + i * (W / 8) - (rotation * W * 0.5) % (W / 8);
+    ctx.beginPath(); ctx.moveTo(x, horizon);
+    ctx.lineTo(x - W * 0.4, H); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(x, horizon);
+    ctx.lineTo(x + W * 0.4, 0); ctx.stroke();
+  }
+
+  // ---- Horizontal lines (floor/ceiling) ----
+  for (let i = 1; i <= 5; i++) {
+    const y = horizon + i * ((H - horizon) / 5);
+    ctx.strokeStyle = `rgba(255,255,255,${0.02 + i * 0.005})`;
+    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+  }
+
+  // ---- Furniture ----
+  room.furniture.forEach(f => {
+    const wx = ((f.x - rotation * 0.5) + 2) % 1;
+    const screenX = wx * W;
+    const screenW = f.w * W;
+    const screenY = H * (0.4 + f.y * 0.35);
+    const screenH = f.h * H;
+
+    ctx.fillStyle = f.color;
+    ctx.fillRect(screenX - screenW / 2, screenY, screenW, screenH);
+
+    // Subtle highlight
+    const hlGrad = ctx.createLinearGradient(screenX - screenW/2, screenY, screenX + screenW/2, screenY);
+    hlGrad.addColorStop(0, "rgba(255,255,255,0.05)");
+    hlGrad.addColorStop(0.5, "rgba(255,255,255,0.12)");
+    hlGrad.addColorStop(1, "rgba(255,255,255,0.02)");
+    ctx.fillStyle = hlGrad;
+    ctx.fillRect(screenX - screenW/2, screenY, screenW, screenH * 0.3);
+  });
+
+  // ---- Windows ----
+  room.windows.forEach(w => {
+    const wx = ((w.x - rotation * 0.5) + 2) % 1;
+    const screenX = wx * W;
+    const screenW = w.w * W;
+    const screenY = H * (0.1 + w.y * 0.3);
+    const screenH = w.h * H;
+
+    // Window frame
+    ctx.strokeStyle = "rgba(255,255,255,0.15)";
+    ctx.lineWidth = 2;
+    ctx.strokeRect(screenX - screenW/2, screenY, screenW, screenH);
+
+    // Light through window
+    const lightGrad = ctx.createRadialGradient(screenX, screenY + screenH/2, 0, screenX, screenY + screenH/2, W * 0.3);
+    lightGrad.addColorStop(0, "rgba(200,220,255,0.1)");
+    lightGrad.addColorStop(1, "rgba(200,220,255,0)");
+    ctx.fillStyle = lightGrad;
+    ctx.fillRect(0, 0, W, H);
+
+    // Sky view
+    ctx.fillStyle = "rgba(100,140,200,0.3)";
+    ctx.fillRect(screenX - screenW/2 + 2, screenY + 2, screenW - 4, screenH - 4);
+  });
+
+  // ---- Ambient particles ----
+  const time = Date.now() * 0.001;
+  for (let i = 0; i < 8; i++) {
+    const px = (Math.sin(time * 0.3 + i * 1.7) * 0.5 + 0.5) * W;
+    const py = (Math.cos(time * 0.2 + i * 2.1) * 0.3 + 0.25) * H;
+    ctx.fillStyle = `rgba(201,161,90,${0.03 + Math.sin(time + i) * 0.02})`;
+    ctx.beginPath(); ctx.arc(px, py, 1.5, 0, Math.PI * 2); ctx.fill();
+  }
+
+  // ---- Compass ----
+  drawCompass();
+}
+
+function drawCompass() {
+  const c = cmpCtx;
+  const R = 24;
+  c.clearRect(0, 0, 52, 52);
+  c.fillStyle = "rgba(6,10,20,0.85)";
+  c.beginPath(); c.arc(26, 26, R, 0, Math.PI * 2); c.fill();
+  c.strokeStyle = "rgba(201,161,90,0.3)";
+  c.lineWidth = 1;
+  c.beginPath(); c.arc(26, 26, R, 0, Math.PI * 2); c.stroke();
+
+  const angle = -rotation * Math.PI * 2;
+  // N arrow
+  c.save(); c.translate(26, 26); c.rotate(angle);
+  c.fillStyle = "#c9a15a";
+  c.beginPath(); c.moveTo(0, -18); c.lineTo(4, 4); c.lineTo(0, 1); c.lineTo(-4, 4); c.closePath(); c.fill();
+  c.fillStyle = "rgba(255,255,255,0.2)";
+  c.beginPath(); c.moveTo(0, 18); c.lineTo(4, -4); c.lineTo(0, -1); c.lineTo(-4, -4); c.closePath(); c.fill();
+  c.restore();
+
+  c.fillStyle = "rgba(201,161,90,0.9)";
+  c.font = "bold 8px Poppins, sans-serif";
+  c.textAlign = "center"; c.textBaseline = "middle";
+  c.fillText("N", 26, 26);
+}
+
+// ---- Animation loop ----
+function animate() {
+  rotation = lerp(rotation, targetRot, 0.08);
+  draw();
+  animFrameId = requestAnimationFrame(animate);
+}
+animate();
+
+// ---- Drag to rotate ----
+const wrapper = document.getElementById("tourWrapper");
+
+wrapper.addEventListener("mousedown", e => {
+  isDragging = true; dragStartX = e.clientX; dragStartRot = targetRot;
+  wrapper.style.cursor = "grabbing";
+});
+window.addEventListener("mousemove", e => {
+  if (!isDragging) return;
+  const dx = (e.clientX - dragStartX) / canvas.width;
+  targetRot = dragStartRot - dx * 1.5;
+});
+window.addEventListener("mouseup", () => { isDragging = false; wrapper.style.cursor = "grab"; });
+
+// Touch support
+wrapper.addEventListener("touchstart", e => {
+  dragStartX = e.touches[0].clientX; dragStartRot = targetRot;
+}, { passive: true });
+wrapper.addEventListener("touchmove", e => {
+  const dx = (e.touches[0].clientX - dragStartX) / canvas.width;
+  targetRot = dragStartRot - dx * 1.5;
+}, { passive: true });
+
+// ---- Change room ----
+function changeRoom(name, btn) {
+  currentRoom = name;
+  const room = ROOMS[name];
+
+  document.getElementById("roomName").textContent = room.name;
+  document.getElementById("roomDesc").textContent = room.desc;
+
+  // Update room buttons
+  document.querySelectorAll(".room-btn").forEach(b => b.classList.remove("active"));
+  if (btn) { btn.classList.add("active"); }
+  else {
+    document.querySelectorAll(".room-btn").forEach(b => {
+      if (b.textContent.toLowerCase().includes(name.slice(0,3))) b.classList.add("active");
+    });
+  }
+
+  // Smooth transition
+  rotation += 0.3;
+  targetRot  = rotation;
+}
+
+// ---- Fullscreen ----
+function toggleFS() {
+  if (!document.fullscreenElement) {
+    document.getElementById("tourWrapper").requestFullscreen?.();
+  } else {
+    document.exitFullscreen?.();
+  }
+}
+</script>
+
+</body>
+</html>

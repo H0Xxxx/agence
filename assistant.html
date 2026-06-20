@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Assistant IA — Agence Hamdaoui</title>
+<link rel="stylesheet" href="style.css">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<script src="transitions.js"></script>
+<script src="data.js"></script>
+</head>
+<body class="chat-page">
+
+<!-- Topbar -->
+<div class="chat-topbar">
+  <a href="index.html" style="color:var(--ivory-dim);text-decoration:none;font-size:13px;display:flex;align-items:center;gap:6px;margin-right:8px;">
+    <svg style="width:16px;height:16px;fill:currentColor;" viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+  </a>
+  <div class="chat-avatar">IA</div>
+  <div class="chat-topbar-info">
+    <h3>Assistant Hamdaoui</h3>
+    <span>● En ligne — Spécialiste immobilier Souk Ahras</span>
+  </div>
+</div>
+
+<!-- API Key banner -->
+<div class="api-key-banner" id="apiKeyBanner">
+  <svg style="width:18px;height:18px;fill:var(--copper);flex-shrink:0;" viewBox="0 0 24 24"><path d="M12.65 10C11.83 7.67 9.61 6 7 6c-3.31 0-6 2.69-6 6s2.69 6 6 6c2.61 0 4.83-1.67 5.65-4H17v4h4v-4h2v-4H12.65zM7 14c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z"/></svg>
+  <span>Clé API Anthropic :</span>
+  <input type="password" id="apiKeyInput" placeholder="sk-ant-..." value="">
+  <button onclick="saveApiKey()">Activer</button>
+</div>
+
+<!-- Messages -->
+<div class="chat-messages" id="chatMessages"></div>
+
+<!-- Suggestions rapides -->
+<div class="chat-suggestions" id="suggestions">
+  <button class="suggestion-chip" onclick="sendSuggestion(this.textContent)">Quels appartements sont disponibles ?</button>
+  <button class="suggestion-chip" onclick="sendSuggestion(this.textContent)">Quelle est la différence entre F2 et F3 ?</button>
+  <button class="suggestion-chip" onclick="sendSuggestion(this.textContent)">Comment réserver une visite ?</button>
+  <button class="suggestion-chip" onclick="sendSuggestion(this.textContent)">Quels sont vos prix ?</button>
+  <button class="suggestion-chip" onclick="sendSuggestion(this.textContent)">L'agence est ouverte quand ?</button>
+</div>
+
+<!-- Input -->
+<div class="chat-input-bar">
+  <textarea id="chatInput" placeholder="Posez votre question sur nos biens, nos offres, les visites..." rows="1"
+    onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMessage()}"
+    oninput="autoResize(this)"></textarea>
+  <button class="send-btn" id="sendBtn" onclick="sendMessage()">
+    <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+  </button>
+</div>
+
+<script>
+// ============================================================
+// CONFIG
+// ============================================================
+const AGENCY_NAME    = "Agence Immobilière Hamdaoui";
+const AGENCY_SINCE   = "1994";
+const AGENCY_CITY    = "Souk Ahras, Algérie";
+const AGENCY_PHONE   = "+213 5XX XXX XXX";
+const AGENCY_WHATSAPP= "https://wa.me/213XXXXXXXXX";
+const AGENCY_HOURS   = "Samedi–Jeudi : 8h–17h";
+
+let apiKey = localStorage.getItem("hm_api_key") || "";
+let conversationHistory = [];
+let isThinking = false;
+
+// ---- API Key ----
+function saveApiKey() {
+  const key = document.getElementById("apiKeyInput").value.trim();
+  if (!key.startsWith("sk-ant-")) { alert("Clé invalide. Elle doit commencer par sk-ant-"); return; }
+  apiKey = key;
+  localStorage.setItem("hm_api_key", key);
+  document.getElementById("apiKeyBanner").style.display = "none";
+  addMessage("ai", "✅ Clé API activée ! Je suis prêt à vous aider.");
+}
+
+if (apiKey) {
+  document.getElementById("apiKeyBanner").style.display = "none";
+  document.getElementById("apiKeyInput").value = apiKey;
+}
+
+// ---- Build system prompt ----
+function buildSystemPrompt() {
+  const props = DB.getProperties().filter(p => p.available);
+  const propsText = props.map(p =>
+    `- ${p.title} (${p.badge||p.type}) | ${p.location} | ${p.price} DA | Surface: ${p.surface||'N/A'} m² | ${p.rooms||'?'} ch. | ${p.description||''}`
+  ).join("\n");
+
+  const reviews = DB.getApprovedReviews().slice(0,3).map(r => `- ${r.name}: "${r.text.substring(0,80)}..."`).join("\n");
+
+  return `Tu es l'assistant virtuel de l'${AGENCY_NAME}, fondée en ${AGENCY_SINCE} à ${AGENCY_CITY}.
+
+Tu parles UNIQUEMENT en français, avec un ton professionnel, chaleureux et précis, comme un conseiller immobilier expert.
+Tu représentes exclusivement cette agence. Si on te parle d'autres agences, ramène poliment la conversation sur Hamdaoui.
+
+INFORMATIONS AGENCE :
+- Nom : ${AGENCY_NAME}
+- Fondée en : ${AGENCY_SINCE}
+- Ville : ${AGENCY_CITY}
+- Téléphone : ${AGENCY_PHONE}
+- Horaires : ${AGENCY_HOURS}
+- WhatsApp : ${AGENCY_WHATSAPP}
+
+BIENS DISPONIBLES ACTUELLEMENT :
+${propsText || "Aucun bien disponible pour le moment."}
+
+AVIS CLIENTS RÉCENTS :
+${reviews || "Aucun avis disponible."}
+
+PAGES UTILES DU SITE :
+- Appartements : appartements.html
+- Réservation visite : booking.html
+- Visite virtuelle : visite-virtuelle.html
+- Projets neufs : projets.html
+- Espace client : espace-client.html
+- Laisser un avis : laisser-avis.html
+
+INSTRUCTIONS :
+- Réponds de façon concise mais complète.
+- Si le client demande des informations sur un bien, donne les détails disponibles ci-dessus.
+- Suggère toujours de réserver une visite ou de contacter via WhatsApp pour aller plus loin.
+- Si la question sort du domaine immobilier ou de l'agence, dis poliment que tu es spécialisé dans l'immobilier Hamdaoui.
+- Utilise des émojis avec parcimonie pour rendre la réponse plus lisible (max 2-3 par message).
+- Formate avec des listes quand il y a plusieurs éléments.`;
+}
+
+// ---- Add message to UI ----
+function addMessage(role, content, isHTML = false) {
+  const container = document.getElementById("chatMessages");
+  const div = document.createElement("div");
+  div.className = `msg ${role}`;
+
+  const initials = role === "ai" ? "IA" : (DB.getSession()?.name?.split(" ").map(w=>w[0]).join("").substring(0,2) || "Vo");
+  div.innerHTML = `
+    <div class="msg-avatar">${initials}</div>
+    <div class="msg-bubble">${isHTML ? content : escapeAndFormat(content)}</div>
+  `;
+  container.appendChild(div);
+  container.scrollTop = container.scrollHeight;
+  return div;
+}
+
+function escapeAndFormat(text) {
+  // Convert markdown-like to HTML
+  return text
+    .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
+    .replace(/\*\*(.*?)\*\*/g,"<strong>$1</strong>")
+    .replace(/\*(.*?)\*/g,"<em>$1</em>")
+    .replace(/^- (.+)$/gm,"<li>$1</li>")
+    .replace(/(<li>.*<\/li>)/s,"<ul>$1</ul>")
+    .replace(/\n\n/g,"</p><p>")
+    .replace(/\n/g,"<br>")
+    .replace(/^(.+)$/,"<p>$1</p>");
+}
+
+// ---- Show typing indicator ----
+function showTyping() {
+  const container = document.getElementById("chatMessages");
+  const div = document.createElement("div");
+  div.className = "msg ai";
+  div.id = "typingIndicator";
+  div.innerHTML = `
+    <div class="msg-avatar">IA</div>
+    <div class="msg-bubble">
+      <div class="typing-indicator">
+        <span></span><span></span><span></span>
+      </div>
+    </div>`;
+  container.appendChild(div);
+  container.scrollTop = container.scrollHeight;
+}
+
+function removeTyping() {
+  const el = document.getElementById("typingIndicator");
+  if (el) el.remove();
+}
+
+// ---- Send message ----
+async function sendMessage() {
+  const input = document.getElementById("chatInput");
+  const text  = input.value.trim();
+  if (!text || isThinking) return;
+
+  if (!apiKey) {
+    alert("Veuillez d'abord entrer votre clé API Anthropic.");
+    document.getElementById("apiKeyBanner").style.display = "flex";
+    return;
+  }
+
+  // Hide suggestions after first message
+  document.getElementById("suggestions").style.display = "none";
+
+  input.value = "";
+  input.style.height = "auto";
+
+  addMessage("user", text);
+  conversationHistory.push({ role: "user", content: text });
+
+  isThinking = true;
+  document.getElementById("sendBtn").disabled = true;
+  showTyping();
+
+  try {
+    const response = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-api-key": apiKey,
+        "anthropic-version": "2023-06-01"
+      },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-6",
+        max_tokens: 1024,
+        system: buildSystemPrompt(),
+        messages: conversationHistory
+      })
+    });
+
+    const data = await response.json();
+
+    if (data.error) throw new Error(data.error.message);
+
+    const reply = data.content[0].text;
+    conversationHistory.push({ role: "assistant", content: reply });
+
+    removeTyping();
+    addMessage("ai", reply);
+
+  } catch (err) {
+    removeTyping();
+    addMessage("ai", `❌ Erreur : ${err.message}. Vérifiez votre clé API.`);
+  } finally {
+    isThinking = false;
+    document.getElementById("sendBtn").disabled = false;
+  }
+}
+
+function sendSuggestion(text) {
+  document.getElementById("chatInput").value = text;
+  sendMessage();
+}
+
+function autoResize(el) {
+  el.style.height = "auto";
+  el.style.height = Math.min(el.scrollHeight, 120) + "px";
+}
+
+// ---- Initial greeting ----
+window.addEventListener("load", () => {
+  const session = DB.getSession();
+  const prenom  = session?.name?.split(" ")[0] || "vous";
+  const props   = DB.getProperties().filter(p=>p.available);
+
+  addMessage("ai",
+    `Bonjour ${prenom} ! 👋 Je suis l'**assistant immobilier** de l'**Agence Hamdaoui**, fondée depuis ${AGENCY_SINCE} à ${AGENCY_CITY}.\n\nJe connais tous nos biens disponibles, nos offres et nos services. Je suis là pour vous aider à **trouver votre bien idéal** ou répondre à toutes vos questions.\n\nNous avons actuellement **${props.length} bien(s) disponible(s)**. Comment puis-je vous aider ?`
+  );
+});
+</script>
+
+</body>
+</html>
